@@ -43,9 +43,15 @@ redeploys `dist/` on every push.
 
 ## Related to
 
-- [Vite](https://vite.dev/guide/)
-- [Vercel](https://vercel.com)
-- [Netlify](https://www.netlify.com)
-- [espeak-ng (npm, WASM)](https://www.npmjs.com/package/espeak-ng)
-- [phonemizer (npm)](https://www.npmjs.com/package/phonemizer)
-- [bootphon/phonemizer](https://github.com/bootphon/phonemizer/tree/master)
+- [Vite](https://vite.dev/guide/) — build tool and dev server; scaffolds the
+  TypeScript project and bundles it into static files.
+- [Vercel](https://vercel.com) — the host we deploy to (free, non-commercial);
+  auto-detects Vite and redeploys on every push.
+- [Netlify](https://www.netlify.com) — the alternative static host we compared
+  against Vercel.
+- [espeak-ng (npm, WASM)](https://www.npmjs.com/package/espeak-ng) — the
+  text-to-phoneme engine compiled to WebAssembly; runs in the browser.
+- [phonemizer (npm)](https://www.npmjs.com/package/phonemizer) — the thin
+  wrapper over espeak-ng WASM that we actually call (`await phonemize(text)`).
+- [bootphon/phonemizer](https://github.com/bootphon/phonemizer/tree/master) —
+  the original Python phonemizer that inspired this project's approach.
