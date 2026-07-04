@@ -22,6 +22,49 @@ h1 {
   text-align: center;
 }
 
+/* ---- converter ---- */
+
+.converter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+#text {
+  flex: 1;
+  min-width: 200px;
+  max-width: 420px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+#convert {
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  color: #fff;
+  background: #3f7cad;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#convert:hover {
+  background: #356a95;
+}
+
+#result {
+  flex-basis: 100%;
+  margin: 0.25rem 0 0;
+  min-height: 1.6em;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
 /* ---- IPA board ---- */
 
 .board {

@@ -18,3 +18,5 @@ node_modules/
 .env.*
 out/
 dist/
+
+.playwright-mcp/
