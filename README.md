@@ -41,17 +41,11 @@ Use only **one** lockfile — don't commit both `package-lock.json` and
 to Vercel — it auto-detects Vite (and whichever lockfile is present) and
 redeploys `dist/` on every push.
 
-## Docs
-
-- [phonemizer vs espeak-ng](docs/phonemizer-vs-espeak-ng.md) — comparison of the
-  two IPA engines and why `phonemizer` was chosen.
-- [WebAssembly (WASM)](docs/wasm.md) — what WASM is and why the app relies on it.
-
 ## Related to
 
-- [espeak-ng (npm, WASM)](https://www.npmjs.com/package/espeak-ng)
-- [phonemizer (npm)](https://www.npmjs.com/package/phonemizer)
-- [bootphon/phonemizer](https://github.com/bootphon/phonemizer/tree/master)
 - [Vite](https://vite.dev/guide/)
 - [Vercel](https://vercel.com)
 - [Netlify](https://www.netlify.com)
+- [espeak-ng (npm, WASM)](https://www.npmjs.com/package/espeak-ng)
+- [phonemizer (npm)](https://www.npmjs.com/package/phonemizer)
+- [bootphon/phonemizer](https://github.com/bootphon/phonemizer/tree/master)
