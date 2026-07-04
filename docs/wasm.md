@@ -44,6 +44,33 @@ The text → IPA feature depends on **espeak-ng**, a program written in **C**.
   `await phonemize("hello")`, JS hands the text to the WASM engine, the engine
   does the phonetic conversion, and hands the IPA back.
 
+## How the WASM loads and runs here
+
+The `.wasm` file is **stored on the server but executed on the client**. Its
+lifecycle:
+
+1. **At rest — server side.** During `bun run build`, the espeak-ng `.wasm`
+   ends up as a static file in `dist/`, which is deployed to Vercel's CDN. It
+   sits there like any image or JS bundle. Nothing runs on the server.
+2. **On page load — downloaded to the client.** `phonemizer` requests the file
+   (via `fetch` / `WebAssembly.instantiateStreaming`) and the browser pulls the
+   bytes down to the visitor's machine. A *copy* now lives in the browser.
+3. **Execution — client side.** The browser compiles and runs that copy on the
+   **visitor's own CPU**, inside the tab's sandbox. The server never executes
+   it — it only served the bytes.
+4. **After that — cached client side.** The browser's HTTP cache keeps the
+   file, so repeat visits usually skip the download entirely.
+
+So the original stays on the server and a downloaded copy runs in each
+visitor's browser:
+
+```
+Vercel CDN (static .wasm)  --HTTP download-->  visitor's browser  --runs on-->  visitor's CPU
+```
+
+Every `await phonemize(text)` call then runs entirely in that already-loaded
+browser copy — no further network request, no server involvement.
+
 ## Consequences for this app
 
 - **No backend.** Conversion happens on the user's device, so the site is pure
