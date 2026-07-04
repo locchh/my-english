@@ -1,10 +1,102 @@
 :root {
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --border: #ccc;
+  --muted: #555;
+
+  /* cell colours — each encodes a phonetic class */
+  --short: #f7f0e7;
+  --long: #f3d7ba;
+  --diphthong: #efbe86;
+  --voiced: #aac6e6;
+  --unvoiced: #bcd2b2;
 }
 
 body {
   font-family: var(--sans);
   margin-inline: auto;
-  max-width: 900px;
+  max-width: 1000px;
   padding: 2rem;
+}
+
+h1 {
+  text-align: center;
+}
+
+/* ---- IPA board ---- */
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.grid {
+  display: grid;
+  gap: 4px;
+}
+
+.vowels {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.consonants {
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.symbol {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.words {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+/* legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 4px;
+}
+
+.chip {
+  padding: 0.15rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+/* cell colours by phonetic class (also used by legend chips) */
+.short {
+  background: var(--short);
+}
+.long {
+  background: var(--long);
+}
+.diphthong {
+  background: var(--diphthong);
+}
+.voiced {
+  background: var(--voiced);
+}
+.unvoiced {
+  background: var(--unvoiced);
 }
