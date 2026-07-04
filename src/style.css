@@ -143,3 +143,9 @@ h1 {
 .unvoiced {
   background: var(--unvoiced);
 }
+
+.vi {
+  font-size: 0.75rem;
+  color: #b04a2f;
+  font-style: italic;
+}

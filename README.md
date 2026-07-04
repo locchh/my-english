@@ -55,3 +55,5 @@ redeploys `dist/` on every push.
   wrapper over espeak-ng WASM that we actually call (`await phonemize(text)`).
 - [bootphon/phonemizer](https://github.com/bootphon/phonemizer/tree/master) —
   the original Python phonemizer that inspired this project's approach.
+- [lucide](https://lucide.dev/)
+- [](https://fonts.google.com/icons)
