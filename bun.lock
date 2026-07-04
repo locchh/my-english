@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "my-english",
+      "dependencies": {
+        "phonemizer": "^1.2.1",
+      },
       "devDependencies": {
         "typescript": "~6.0.2",
         "vite": "^8.1.1",
@@ -86,6 +89,8 @@
     "lightningcss-win32-x64-msvc": ["lightningcss-win32-x64-msvc@1.32.0", "", { "os": "win32", "cpu": "x64" }, "sha512-Amq9B/SoZYdDi1kFrojnoqPLxYhQ4Wo5XiL8EVJrVsB8ARoC1PWW6VGtT0WKCemjy8aC+louJnjS7U18x3b06Q=="],
 
     "nanoid": ["nanoid@3.3.15", "", { "bin": { "nanoid": "bin/nanoid.cjs" } }, "sha512-y7Wygv/7mEOvxTuEQDB8StXdMRBWf1kR/tlhAzBRUFkB2jfcLOAxO/SHmOO2zgz1pVgK29/kyupn059/bCHdjA=="],
+
+    "phonemizer": ["phonemizer@1.2.1", "", {}, "sha512-v0KJ4mi2T4Q7eJQ0W15Xd4G9k4kICSXE8bpDeJ8jisL4RyJhNWsweKTOi88QXFc4r4LZlz5jVL5lCHhkpdT71A=="],
 
     "picocolors": ["picocolors@1.1.1", "", {}, "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="],
 
