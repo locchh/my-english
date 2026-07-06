@@ -5,7 +5,7 @@
 // `vi` is a rough Vietnamese approximation of the sound. Sounds marked * have
 // no real Vietnamese equivalent (English th, etc.) — these are only hints.
 type PhonemeType = 'short' | 'long' | 'diphthong' | 'voiced' | 'unvoiced'
-type Phoneme = { symbol: string; type: PhonemeType; vi: string; words: string[] }
+type Phoneme = { symbol: string; alt?: string; type: PhonemeType; vi: string; words: string[] }
 
 const vowels: Phoneme[] = [
   // row 1
@@ -13,22 +13,22 @@ const vowels: Phoneme[] = [
   { symbol: 'ɪ', type: 'short', vi: 'i (ngắn)', words: ['sh[i]p', 'b[u]sy', 'start[e]d'] },
   { symbol: 'ʊ', type: 'short', vi: 'u (ngắn)', words: ['g[oo]d', 'p[u]t', 'sh[oul]d'] },
   { symbol: 'uː', type: 'long', vi: 'u (dài)', words: ['m[oo]n', 'gr[ew]', 'thr[ough]'] },
-  { symbol: 'ɪə', type: 'diphthong', vi: 'i-ơ', words: ['[ea]r', 'h[ere]', 'car[eer]'] },
+  { symbol: 'ɪə', alt: 'ɪɹ', type: 'diphthong', vi: 'i-ơ', words: ['[ea]r', 'h[ere]', 'car[eer]'] },
   { symbol: 'eɪ', type: 'diphthong', vi: 'ây', words: ['tr[ai]n', 's[ay]', 'pl[a]ne'] },
   // row 2
-  { symbol: 'e', type: 'short', vi: 'e', words: ['b[e]d', 'd[ea]d', 's[ai]d'] },
+  { symbol: 'e', alt: 'ɛ', type: 'short', vi: 'e', words: ['b[e]d', 'd[ea]d', 's[ai]d'] },
   { symbol: 'ə', type: 'short', vi: 'ơ (nhẹ)', words: ['[a]bout', 'p[o]lice', 'th[e]'] },
   { symbol: 'ɜː', type: 'long', vi: 'ơ (dài)', words: ['b[ir]d', 'h[ur]t', 'w[or]k'] },
   { symbol: 'ɔː', type: 'long', vi: 'o (dài)', words: ['d[oor]', 'w[al]k', 's[aw]'] },
-  { symbol: 'ʊə', type: 'diphthong', vi: 'u-ơ', words: ['y[our]', 's[ure]', 't[our]ist'] },
+  { symbol: 'ʊə', alt: 'ʊɹ', type: 'diphthong', vi: 'u-ơ', words: ['y[our]', 's[ure]', 't[our]ist'] },
   { symbol: 'ɔɪ', type: 'diphthong', vi: 'oi', words: ['b[oy]', 'p[oi]nt', '[oi]l'] },
-  { symbol: 'əʊ', type: 'diphthong', vi: 'âu', words: ['c[oa]t', 'l[ow]', 'n[o]te'] },
+  { symbol: 'əʊ', alt: 'oʊ', type: 'diphthong', vi: 'âu', words: ['c[oa]t', 'l[ow]', 'n[o]te'] },
   // row 3
   { symbol: 'æ', type: 'short', vi: 'a (pha e)', words: ['[a]pple', 'c[a]t', 'm[a]t'] },
   { symbol: 'ʌ', type: 'short', vi: 'â', words: ['[u]p', 'm[o]ney', 'c[u]t'] },
   { symbol: 'ɑː', type: 'long', vi: 'a (dài)', words: ['c[ar]', 'b[a]th', 'saf[ar]i'] },
-  { symbol: 'ɒ', type: 'short', vi: 'o (ngắn)', words: ['n[o]t', 'wh[a]t', 'bec[au]se'] },
-  { symbol: 'eə', type: 'diphthong', vi: 'e-ơ', words: ['h[air]', 'c[are]ful', 'th[ere]'] },
+  { symbol: 'ɒ', alt: 'ɑ', type: 'short', vi: 'o (ngắn)', words: ['n[o]t', 'wh[a]t', 'bec[au]se'] },
+  { symbol: 'eə', alt: 'ɛɹ', type: 'diphthong', vi: 'e-ơ', words: ['h[air]', 'c[are]ful', 'th[ere]'] },
   { symbol: 'aɪ', type: 'diphthong', vi: 'ai', words: ['b[y]', 'h[igh]', 'f[i]ne'] },
   { symbol: 'aʊ', type: 'diphthong', vi: 'ao', words: ['n[ow]', '[ou]r', 'h[ou]se'] },
 ]
@@ -58,18 +58,19 @@ const consonants: Phoneme[] = [
   { symbol: 'ŋ', type: 'voiced', vi: 'ng', words: ['si[ng]', 'u[n]cle', 'a[ng]ry'] },
   { symbol: 'j', type: 'voiced', vi: 'y', words: ['[y]es', 'on[i]on', 'v[i]ew'] },
   { symbol: 'l', type: 'voiced', vi: 'l', words: ['[l]ight', 'sme[ll]y', 'fee[l]'] },
-  { symbol: 'r', type: 'voiced', vi: 'r (uốn lưỡi)', words: ['[r]ight', 'be[rr]y', '[wr]ong'] },
+  { symbol: 'r', alt: 'ɹ', type: 'voiced', vi: 'r (uốn lưỡi)', words: ['[r]ight', 'be[rr]y', '[wr]ong'] },
   { symbol: 'w', type: 'voiced', vi: 'oa / w', words: ['[w]in', '[wh]ere', '[o]ne'] },
   { symbol: 'h', type: 'unvoiced', vi: 'h', words: ['[h]ouse', '[h]ungry', '[wh]o'] },
 ]
 
 function cell(p: Phoneme): string {
   const symbol = `<div class="symbol">${p.symbol}</div>`
+  const alt = p.alt ? `<span class="alt">/${p.alt}/</span>` : ''
   const vi = `<div class="vi">${p.vi}</div>`
   const words = p.words
     .map((w) => `<span>${w.replace(/\[(.+?)\]/g, '<u>$1</u>')}</span>`)
     .join(' ')
-  return `<div class="cell ${p.type}">${symbol}${vi}<div class="words">${words}</div></div>`
+  return `<div class="cell ${p.type}">${symbol}${alt}${vi}<div class="words">${words}</div></div>`
 }
 
 const legendTypes: PhonemeType[] = ['short', 'long', 'diphthong', 'voiced', 'unvoiced']
