@@ -1,9 +1,11 @@
 import './style.css'
+import { navHTML } from './nav'
 import { boardHTML } from './board'
 import { convert } from './convert'
 
 // Inject the app's HTML markup into the #app container
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+  ${navHTML('ipa.html')}
   <h1>IPA Converter</h1>
   <div class="converter">
     <input id="text" placeholder="Type English..."/>
