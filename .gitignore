@@ -20,3 +20,7 @@ out/
 dist/
 
 .playwright-mcp/
+
+
+PROMPT.md
+*PLAN.md

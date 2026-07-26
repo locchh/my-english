@@ -26,6 +26,23 @@
   --diphthong: #efbe86;
   --voiced: #aac6e6;
   --unvoiced: #bcd2b2;
+
+  /* Tense-grid columns: one hue per time, as a light fill plus a darker line
+     used for that column's border, header text and header rule. Giving each
+     column a single hue is what stops the grid reading as 19 unrelated boxes.
+     Every pair below was checked numerically, all four constraints at once:
+       line on fill  >= 4.5  (formula text)
+       line on white >= 4.5  (header label)
+       line vs white >= 3.0  (border perceivable on the page, WCAG 1.4.11)
+       line vs fill  >= 3.0  (border perceivable against its own fill)
+     Worst margin is past at 5.30:1 text / 5.30:1 non-text. Nudging any fill
+     darker or any line lighter eats that margin — recheck if you touch them. */
+  --past-bg: #fdeeda;
+  --past-line: #8f5511;
+  --present-bg: #e3f2e4;
+  --present-line: #2a6531;
+  --future-bg: #e2edf9;
+  --future-line: #2f5f87;
 }
 
 body {
@@ -408,4 +425,401 @@ h1 {
   padding: 1.25rem 0.75rem;
   color: var(--muted);
   text-align: center;
+}
+
+/* ---- tenses: the composition rule ---- */
+
+/* Kept deliberately light: this explains the grid, so it must not out-weigh
+   it. A solid --short fill here made the page's heaviest block the one piece
+   of supporting text. */
+.tense-rule {
+  margin-bottom: 1.75rem;
+  padding: 0.6rem 0.9rem;
+  border-left: 3px solid var(--accent);
+  background: #fbfbfb;
+  font-size: 0.85rem;
+}
+
+.tense-rule h2 {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+}
+
+.tense-rule p {
+  margin: 0.35rem 0;
+}
+
+/* ---- tenses grid ---- */
+
+.grid-hint {
+  margin: -0.25rem 0 1.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* The hint is a block so it drops onto its own line under the axis label,
+   without needing a <br> in the markup. `inherit` rather than a fixed colour
+   so a column hint picks up its own column's hue — a fixed brown here fought
+   the green and blue columns. */
+.axis-hint {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.68rem;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  font-style: italic;
+  color: inherit;
+}
+
+/* Row hints sit on white with no column hue to inherit, so they take the
+   neutral muted grey — one step down from the row label above them. */
+.tense-grid tbody th .axis-hint {
+  color: var(--muted);
+}
+
+.tense-grid {
+  width: 100%;
+  /* separate, so each formula keeps its own rounded box. Only the cells are
+     boxes — headers are plain text — which is the whole point: 12 boxes with
+     hierarchy instead of 19 boxes competing. */
+  border-collapse: separate;
+  border-spacing: 6px 6px;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.tense-grid td {
+  padding: 0;
+  text-align: center;
+}
+
+/* Header label, no box and no fill — just the column's hue and a rule under
+   it. The rule is on the <th> bottom edge only, so it reads as an axis line
+   rather than an outline. */
+.tense-grid thead th {
+  padding: 0 0.4rem 0.45rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tense-grid thead th.time-past {
+  color: var(--past-line);
+  border-bottom: 2px solid var(--past-line);
+}
+.tense-grid thead th.time-present {
+  color: var(--present-line);
+  border-bottom: 2px solid var(--present-line);
+}
+.tense-grid thead th.time-future {
+  color: var(--future-line);
+  border-bottom: 2px solid var(--future-line);
+}
+
+/* The empty corner cell is a <td>, so it never picks up the thead th rule —
+   no floating line under nothing, and no border reset needed here. */
+
+/* Row headers: plain text, no slab and no left bar. They label the rows; the
+   tinted cells are what the eye should land on. */
+.tense-grid tbody th {
+  padding: 0.5rem 0.9rem 0.5rem 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* The formula box. The button IS the cell frame, so the <td> has no border —
+   two nested borders read as noise. Border/text colour come from the
+   .time-* class, giving each column one hue instead of a grey outline. */
+.tense-cell {
+  width: 100%;
+  padding: 0.85rem 0.5rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.tense-cell:hover,
+.tense-cell:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.13);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tense-cell {
+    transition: none;
+  }
+  .tense-cell:hover {
+    transform: none;
+  }
+}
+
+/* One hue per column: fill, border and text. The border colour doubles as the
+   3:1 non-text contrast the control needs (WCAG 1.4.11) — see :root. */
+.tense-cell.time-past {
+  background: var(--past-bg);
+  border-color: var(--past-line);
+  color: var(--past-line);
+}
+.tense-cell.time-present {
+  background: var(--present-bg);
+  border-color: var(--present-line);
+  color: var(--present-line);
+}
+.tense-cell.time-future {
+  background: var(--future-bg);
+  border-color: var(--future-line);
+  color: var(--future-line);
+}
+
+/* ---- tense dialog ---- */
+
+/* Sizing/border on the <dialog> itself — the browser centers it and
+   supplies the ::backdrop layer for free. */
+#tense-dialog {
+  max-width: 520px;
+  width: 90vw;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  /* border-box, or the UA's own `max-height: calc(100% - 38px)` is measured
+     against content only and the 40px padding + 2px border push the dialog
+     past the viewport — measured at 564px inside 560px, clipping the close
+     button off the top. The UA already supplies overflow-y: auto, so with
+     correct sizing tall tenses scroll instead of getting cut. */
+  box-sizing: border-box;
+}
+
+#tense-dialog::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+#tense-dialog-close {
+  float: right;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Own line, not inline: the longest names ("Tương lai hoàn thành tiếp diễn")
+   wrap mid-phrase next to the English title and orphan the last word. */
+.tense-name-vi {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: var(--vi);
+}
+
+/* The composed meaning — the sentence the two header hints multiply out to.
+   Now sits under its own "Diễn tả" heading, so it no longer needs the accent
+   bar to announce itself as a distinct block. */
+.tense-meaning {
+  margin: 0.4rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: var(--short);
+  font-size: 0.85rem;
+}
+
+.tense-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0.6rem 0 1rem;
+}
+
+/* Label left, formula centred in its box. Keeping dt/dd as the two halves is
+   what makes that split possible without extra wrapper elements. */
+.tense-forms dt {
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* Every formula is framed and centred — the box is what makes it read as a
+   pattern to memorise rather than a line of prose. */
+.tense-forms dd {
+  margin: 0.2rem 0 0;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--short);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Present/Past Simple only: the ordinary-verb vs special-verb split. Grouped
+   by its heading and whitespace alone — an indent bar here just added another
+   grey line to a panel that already has plenty of edges. */
+.form-variant {
+  margin: 0.9rem 0 0;
+}
+
+.form-variant h4 {
+  margin: 0 0 0.1rem;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+/* ---- popup: usage + adverbs ---- */
+
+#tense-dialog h3 {
+  margin: 1.1rem 0 0.3rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.usage-list {
+  margin: 0;
+  padding-left: 1.3rem;
+  font-size: 0.88rem;
+}
+
+.usage-list li {
+  margin-bottom: 0.55rem;
+}
+
+/* Description then example, stacked — the Vietnamese states the use and the
+   English sentence demonstrates it, so they read as one unit, not two.
+   The "Ex:" label and the italic already separate them; a rule down the left
+   of every example was one grey line per usage, four deep. */
+.usage-vi,
+.usage-en {
+  display: block;
+}
+
+.usage-en {
+  margin-top: 0.1rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.usage-ex {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* Signal words as chips — a scannable set, not a sentence. */
+.adverb-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adverb-list li {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fafafa;
+  font-size: 0.78rem;
+}
+
+.tense-examples {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tense-examples li {
+  display: flex;
+  flex-direction: column;
+}
+
+.ex-vi {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--vi);
+}
+
+/* ---- notes ---- */
+
+/* Deliberately set smaller than the grid above: the matrix is the page's
+   subject, the notes are footnotes to it. */
+.note {
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.85rem;
+  border-left: 3px solid var(--accent);
+  background: #fafafa;
+  font-size: 0.8rem;
+}
+
+.note h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.9rem;
+}
+
+.note p {
+  margin: 0.35rem 0;
+}
+
+.note .tense-examples {
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.note .ex-vi {
+  font-size: 0.75rem;
+}
+
+/* ---- s/es rules table (inside a note) ---- */
+
+.note-rules {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  font-size: 0.78rem;
+}
+
+.note-rules th,
+.note-rules td {
+  padding: 0.3rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.note-rules thead th {
+  border-bottom: 2px solid var(--accent);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.note-rules tbody th {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The transformation itself — the column the reader is scanning for. */
+.rule-then {
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--accent);
 }
