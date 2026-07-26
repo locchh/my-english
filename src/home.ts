@@ -20,7 +20,7 @@ const features: Feature[] = [
   },
   {
     href: 'verbs.html',
-    emoji: '📚',
+    emoji: '🔤',
     title: 'Irregular Verbs',
     blurb: 'Base, past simple and past participle for the verbs that refuse to follow the rules.',
   },
