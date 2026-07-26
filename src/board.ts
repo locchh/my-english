@@ -66,24 +66,37 @@ const consonants: Phoneme[] = [
 function cell(p: Phoneme): string {
   const symbol = `<div class="symbol">${p.symbol}</div>`
   const alt = p.alt ? `<span class="alt">/${p.alt}/</span>` : ''
-  const vi = `<div class="vi">${p.vi}</div>`
+  // The class is also printed as text, not just encoded in the cell tint —
+  // colour alone is unreadable to a colourblind user (WCAG 1.4.1).
+  const type = `<div class="cell-type">${p.type}</div>`
+  // lang="vi" stops screen readers reading "i (dài)" with English phonetics.
+  const vi = `<div class="vi" lang="vi">${p.vi}</div>`
   const words = p.words
     .map((w) => `<span>${w.replace(/\[(.+?)\]/g, '<u>$1</u>')}</span>`)
     .join(' ')
-  return `<div class="cell ${p.type}">${symbol}${alt}${vi}<div class="words">${words}</div></div>`
+  return `<div class="cell ${p.type}">${symbol}${alt}${type}${vi}<div class="words">${words}</div></div>`
 }
 
 const legendTypes: PhonemeType[] = ['short', 'long', 'diphthong', 'voiced', 'unvoiced']
 
+// Each grid sits in its own <section> tied to a heading, so the 44 cells
+// aren't one flat run of unlabelled boxes to a screen reader.
 export function boardHTML(): string {
   const legend = legendTypes
     .map((t) => `<span class="chip ${t}">${t}</span>`)
     .join('')
   return `
-    <section class="board">
-      <div class="legend">${legend}</div>
-      <div class="grid vowels">${vowels.map(cell).join('')}</div>
-      <div class="grid consonants">${consonants.map(cell).join('')}</div>
+    <section class="board" aria-labelledby="board-heading">
+      <h2 id="board-heading">IPA chart</h2>
+      <div class="legend" role="group" aria-label="Colour key">${legend}</div>
+      <section aria-labelledby="vowels-heading">
+        <h3 id="vowels-heading">Vowels</h3>
+        <div class="grid vowels">${vowels.map(cell).join('')}</div>
+      </section>
+      <section aria-labelledby="consonants-heading">
+        <h3 id="consonants-heading">Consonants</h3>
+        <div class="grid consonants">${consonants.map(cell).join('')}</div>
+      </section>
     </section>
   `
 }
