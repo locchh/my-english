@@ -39,10 +39,18 @@ export type Tense = {
   aspect: Aspect
   nameEn: string // "Past Perfect Continuous"
   nameVi: string // "Quá khứ hoàn thành tiếp diễn"
-  /** The two halves of the matrix composed into one sentence: the mốc that
-   *  `time` supplies, plus the action's position relative to it that `aspect`
-   *  supplies. See timeHint/aspectHint in tenses.ts for the halves. */
+  /** Plain-Vietnamese summary of what the tense expresses, in the same
+   *  register as PROMPT.md ("Diễn tả một hành động, sự việc…"). Must cover
+   *  every case listed in `usages` — see scripts/audit-tense-consistency.mjs. */
   meaning: string
+  /** The SAME sentence conjugated into this tense, so the grid can show all
+   *  twelve side by side and only the tense changes. This is what makes the
+   *  auxiliary pattern visible: works → is working → has worked → has been
+   *  working. Subject is "She" throughout so the -s and is/has forms show. */
+  example: { en: string; vi: string }
+  /** The five tenses that cover most everyday English. Marked in the grid so
+   *  a beginner knows where to start instead of facing all twelve at once. */
+  common?: boolean
   forms: TenseForms
   usages: Usage[]
   /** Signal words that point at this tense. Every tense here has some, but
@@ -60,6 +68,8 @@ export const tenses: Tense[] = [
     aspect: 'simple',
     nameEn: 'Past Simple',
     nameVi: 'Quá khứ đơn',
+    example: { en: 'She worked.', vi: 'Cô ấy đã làm việc. (đã xong hẳn)' },
+    common: true,
     meaning:
       'Diễn tả một hành động, sự việc đã xảy ra vào một thời điểm trong quá khứ và nay đã chấm dứt hẳn. Hành động đó có thể chỉ xảy ra trong giây lát, hoặc kéo dài suốt một khoảng thời gian rồi kết thúc.',
     forms: {
@@ -94,6 +104,7 @@ export const tenses: Tense[] = [
     aspect: 'continuous',
     nameEn: 'Past Continuous',
     nameVi: 'Quá khứ tiếp diễn',
+    example: { en: 'She was working.', vi: 'Lúc đó cô ấy đang làm việc.' },
     // Not "tại một mốc": usages 2 and 4 below are a whole span (all day) and a
     // pair of parallel actions, neither of which sits on a single point.
     meaning:
@@ -132,6 +143,10 @@ export const tenses: Tense[] = [
     aspect: 'perfect',
     nameEn: 'Past Perfect',
     nameVi: 'Quá khứ hoàn thành',
+    // NOT "xong trước": the comment below and ruleHTML both state that perfect
+    // does not mean completion. "trước một việc khác" carries the anteriority
+    // without the completion claim.
+    example: { en: 'She had worked.', vi: 'Cô ấy đã làm việc. (trước một việc khác trong quá khứ)' },
     // "Nằm trước", not "xong trước": perfect asserts anteriority, not
     // completion ("He had lived there for ten years before he moved" is past
     // perfect and unfinished at that point). The usage below happens to be the
@@ -163,6 +178,7 @@ export const tenses: Tense[] = [
     aspect: 'perfect-continuous',
     nameEn: 'Past Perfect Continuous',
     nameVi: 'Quá khứ hoàn thành tiếp diễn',
+    example: { en: 'She had been working.', vi: 'Cô ấy đã làm việc liên tục cho tới lúc đó.' },
     // Deliberately generic ("một mốc"): Diễn tả is the matrix composition, and
     // the usage below is what pins the mốc down (a second past action, in past
     // simple). Stated as one sentence they look duplicated — the split is
@@ -193,6 +209,8 @@ export const tenses: Tense[] = [
     aspect: 'simple',
     nameEn: 'Present Simple',
     nameVi: 'Hiện tại đơn',
+    example: { en: 'She works.', vi: 'Cô ấy làm việc. (nói chung, thường xuyên)' },
+    common: true,
     // The "lịch trình" clause must say the event is in the FUTURE. Naming the
     // case alone isn't enough: under a sentence about "bây giờ", a reader has
     // no way to guess that this one describes tomorrow's train.
@@ -244,6 +262,8 @@ export const tenses: Tense[] = [
     aspect: 'continuous',
     nameEn: 'Present Continuous',
     nameVi: 'Hiện tại tiếp diễn',
+    example: { en: 'She is working.', vi: 'Cô ấy đang làm việc.' },
+    common: true,
     // The old wording stopped at "bây giờ" and left usage 3 — the near-future
     // arrangement — completely uncovered, even though it's the one use that
     // isn't about the present at all.
@@ -279,6 +299,8 @@ export const tenses: Tense[] = [
     aspect: 'perfect',
     nameEn: 'Present Perfect',
     nameVi: 'Hiện tại hoàn thành',
+    example: { en: 'She has worked.', vi: 'Cô ấy đã làm việc, và việc đó còn liên quan tới hiện tại.' },
+    common: true,
     // "có thể đã xong, hoặc vẫn đang kéo dài" is load-bearing: usage 3
     // ("They have lived in Ha Noi since 2015") is NOT finished, so any wording
     // built on "đã xong" would contradict it.
@@ -335,6 +357,7 @@ export const tenses: Tense[] = [
     aspect: 'perfect-continuous',
     nameEn: 'Present Perfect Continuous',
     nameVi: 'Hiện tại hoàn thành tiếp diễn',
+    example: { en: 'She has been working.', vi: 'Cô ấy đã làm việc liên tục cho tới bây giờ.' },
     // "hoặc vừa dứt" covers usage 2 — she has stopped crying; only the result
     // (red eyes) is present. "Thường vẫn đang tiếp tục" alone would exclude it.
     meaning:
@@ -367,6 +390,8 @@ export const tenses: Tense[] = [
     aspect: 'simple',
     nameEn: 'Future Simple',
     nameVi: 'Tương lai đơn',
+    example: { en: 'She will work.', vi: 'Cô ấy sẽ làm việc.' },
+    common: true,
     // Purely temporal wording left usage 2 uncovered: `will` is a modal, so
     // besides placing an event in the future it also carries the speaker's
     // attitude (opinion / promise / decision made on the spot).
@@ -398,6 +423,7 @@ export const tenses: Tense[] = [
     aspect: 'continuous',
     nameEn: 'Future Continuous',
     nameVi: 'Tương lai tiếp diễn',
+    example: { en: 'She will be working.', vi: 'Lúc đó cô ấy sẽ đang làm việc.' },
     // Same span problem as Past Continuous: usage 2 is "all day tomorrow".
     meaning:
       'Diễn tả một hành động, sự việc sẽ đang xảy ra vào một thời điểm trong tương lai, hoặc sẽ kéo dài suốt một khoảng thời gian ở tương lai.',
@@ -427,6 +453,7 @@ export const tenses: Tense[] = [
     aspect: 'perfect',
     nameEn: 'Future Perfect',
     nameVi: 'Tương lai hoàn thành',
+    example: { en: 'She will have worked.', vi: 'Cô ấy sẽ làm việc xong trước lúc đó.' },
     meaning:
       'Diễn tả một hành động, sự việc sẽ hoàn tất trước một thời điểm hoặc trước một hành động khác trong tương lai. Thời điểm đó thường được nêu bằng một cụm bắt đầu với by (by next year, by Friday).',
     forms: {
@@ -451,6 +478,10 @@ export const tenses: Tense[] = [
     aspect: 'perfect-continuous',
     nameEn: 'Future Perfect Continuous',
     nameVi: 'Tương lai hoàn thành tiếp diễn',
+    // "sẽ đã" is a word-for-word calque of "will have" and isn't Vietnamese.
+    // Uses the "được + khoảng thời gian … rồi" construction the translation
+    // note prescribes for perfect continuous.
+    example: { en: 'She will have been working.', vi: 'Đến lúc đó, cô ấy sẽ làm việc liên tục được một thời gian rồi.' },
     meaning:
       'Diễn tả một hành động, sự việc sẽ kéo dài liên tục cho tới một thời điểm hoặc một hành động khác trong tương lai, nhấn mạnh khoảng thời gian hành động đã kéo dài cho tới lúc đó.',
     forms: {
@@ -527,7 +558,10 @@ export const notes: Note[] = [
   {
     title: 'Quy tắc thêm s/es (ngôi thứ 3 số ít, hiện tại đơn)',
     body: [
-      'Chỉ ngôi thứ 3 số ít (he, she, it, danh từ số ít) mới thêm s/es — I, you, we, they giữ nguyên động từ nguyên mẫu.',
+      'Chỉ ngôi thứ 3 số ít mới thêm s/es — I, you, we, they giữ nguyên động từ nguyên mẫu.',
+      // Uncountables have no number, so they can't sit inside "mọi danh từ số
+      // ít" — they're named alongside it instead.
+      'Ngôi thứ 3 số ít không chỉ là he, she, it. Mọi danh từ số ít — và cả danh từ không đếm được — đều thuộc ngôi này: tên riêng (Vietnam, Lan), danh từ đếm được số ít (the cat, my brother), danh từ không đếm được (rain, water, money, time). Tất cả đều đi với động từ thêm s/es: The cat sleeps a lot. / Vietnam has a long coastline. / Water boils at 100 degrees.',
       'Cách phát âm đuôi này: /ɪz/ sau các âm xì (watches, misses), /s/ sau âm vô thanh (works, stops), /z/ sau âm hữu thanh và nguyên âm (plays, goes). Tra các âm ở trang IPA Converter.',
       'Hai quy tắc “y” bên dưới giống hệt quy tắc thêm -ed: study → studied, play → played.',
     ],
@@ -546,6 +580,98 @@ export const notes: Note[] = [
     examples: [
       { en: 'She goes to school. / They go to school.', vi: 'Chỉ ngôi thứ 3 số ít thêm es; các ngôi khác giữ nguyên.' },
       { en: 'He studies English. / I study English.', vi: 'studies (phụ âm + y → ies) so với study giữ nguyên.' },
+    ],
+  },
+  // Right after the s/es note: that note says "ngôi thứ 3 số ít" changes the
+  // verb, and this is the full table of what each subject changes.
+  {
+    title: 'Chủ ngữ nào đi với am/is/are, was/were, have/has, do/does',
+    body: [
+      // "trợ động từ" would be wrong for half the examples here: in "Vietnam is
+      // beautiful" or "The rain is heavy", is/are is the main (linking) verb.
+      'Chọn dạng của be, have, do theo chủ ngữ, không theo nghĩa của câu. Cùng một thì nhưng chủ ngữ khác nhau thì dạng của các động từ này khác nhau.',
+      'Danh từ số ít, tên riêng và danh từ không đếm được đều tính là ngôi thứ 3 số ít, nên đi với is/was/has/does giống hệt he, she, it.',
+      'Ở quá khứ chỉ có be đổi theo chủ ngữ (was/were); have → had và do → did thì dùng chung cho mọi chủ ngữ.',
+      'Riêng will thì dùng chung cho mọi chủ ngữ, không đổi theo ngôi. Shall chỉ dùng với I và we, mang nghĩa trang trọng hoặc để đưa ra lời đề nghị: Shall we go?',
+    ],
+    ruleHeads: ['Chủ ngữ', 'Dạng hiện tại', 'Dạng quá khứ của be, và ví dụ'],
+    rules: [
+      { when: 'I', then: 'am · have · do', examples: 'was — I am working. / I have worked.' },
+      { when: 'You, We, They', then: 'are · have · do', examples: 'were — They are working. / They have worked.' },
+      { when: 'He, She, It', then: 'is · has · does', examples: 'was — She is working. / She has worked.' },
+      {
+        when: 'Danh từ số ít (the cat, my brother)',
+        then: 'is · has · does',
+        examples: 'was — The cat is sleeping. / The cat has slept all day.',
+      },
+      { when: 'Tên riêng (Vietnam, Lan)', then: 'is · has · does', examples: 'was — Vietnam is beautiful.' },
+      {
+        when: 'Danh từ không đếm được (rain, water, money)',
+        then: 'is · has · does',
+        examples: 'was — The rain is heavy today.',
+      },
+      {
+        when: 'Danh từ số nhiều (the cats, my brothers)',
+        then: 'are · have · do',
+        examples: 'were — The cats are sleeping.',
+      },
+    ],
+    examples: [
+      {
+        en: 'The news is good. / My glasses are new.',
+        vi: 'Đừng chỉ nhìn chữ s ở cuối: news là danh từ không đếm được nên đi với is, còn glasses luôn ở số nhiều nên đi với are.',
+      },
+    ],
+  },
+  {
+    title: 'Quy tắc thêm đuôi -ing',
+    body: [
+      'Dùng cho tất cả các thì tiếp diễn (be + V-ing) và hoàn thành tiếp diễn (have + been + V-ing).',
+      'Quy tắc gấp đôi phụ âm cuối chỉ áp dụng khi động từ tận cùng bằng phụ âm – nguyên âm – phụ âm VÀ âm tiết cuối được nhấn trọng âm. Vì vậy begin → beginning (trọng âm ở -gin) nhưng open → opening (trọng âm ở o-), còn explain → explaining vì không tận cùng phụ âm – nguyên âm – phụ âm.',
+      'Khác với s/es và -ed, đuôi -y không bao giờ đổi trước -ing: study → studying, carry → carrying, play → playing.',
+    ],
+    ruleHeads: ['Động từ tận cùng', 'Cách thêm', 'Examples'],
+    rules: [
+      // play belongs in the w/x/y row below, where it blocks the false
+      // positive that p-l-a-y looks like consonant–vowel–consonant.
+      { when: 'Phần lớn động từ', then: '+ ing', examples: 'work → working, study → studying, open → opening' },
+      { when: 'Tận cùng bằng e câm', then: 'bỏ e, + ing', examples: 'write → writing, make → making, come → coming' },
+      { when: 'Tận cùng bằng ee', then: 'giữ nguyên, + ing', examples: 'see → seeing, agree → agreeing' },
+      { when: 'Tận cùng bằng ie', then: 'ie → y, + ing', examples: 'lie → lying, die → dying, tie → tying' },
+      {
+        when: 'Một âm tiết, tận cùng phụ âm – nguyên âm – phụ âm',
+        then: 'gấp đôi phụ âm cuối, + ing',
+        examples: 'run → running, sit → sitting, stop → stopping, get → getting',
+      },
+      {
+        // The CVC condition is NOT optional here. Without it the row also
+        // matches explain (two syllables, stress on the last) and produces
+        // "explainning". Same for appear, remain, contain.
+        when: 'Hai âm tiết, trọng âm ở âm tiết cuối, tận cùng phụ âm – nguyên âm – phụ âm',
+        then: 'gấp đôi phụ âm cuối, + ing',
+        examples: 'begin → beginning, prefer → preferring, forget → forgetting',
+      },
+      {
+        when: 'Tận cùng bằng w, x, y',
+        then: 'KHÔNG gấp đôi, + ing',
+        examples: 'snow → snowing, fix → fixing, play → playing',
+      },
+      {
+        when: 'Tận cùng bằng nguyên âm + l (Anh-Anh)',
+        then: 'gấp đôi l, + ing',
+        examples: 'travel → travelling, cancel → cancelling (Anh-Mỹ: traveling, canceling)',
+      },
+      {
+        when: 'Tận cùng bằng nguyên âm + c',
+        then: 'c → ck, + ing',
+        examples: 'picnic → picnicking, panic → panicking',
+      },
+    ],
+    examples: [
+      {
+        en: 'begin → beginning, but open → opening',
+        vi: 'Cùng hai âm tiết và cùng tận cùng phụ âm – nguyên âm – phụ âm, nhưng begin nhấn ở âm cuối nên gấp đôi, còn open nhấn ở âm đầu nên không gấp đôi.',
+      },
     ],
   },
   {

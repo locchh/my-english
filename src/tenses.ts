@@ -30,7 +30,7 @@ const aspectLabel: Record<Aspect, string> = {
 // matrix itself shows how each cell's meaning is derived — read a column
 // hint + a row hint and you have the tense's meaning, no memorising.
 //
-// The column fixes WHERE the reference point (mốc) sits...
+// The column fixes WHICH POINT IN TIME is being talked about...
 // "thời điểm", never "mốc". PROMPT.md — the authoritative register for this
 // page — uses "thời điểm" four times and "mốc" zero times; "mốc" was invented
 // here, and on its own it reads as either a boundary stake or mildew.
@@ -39,7 +39,29 @@ const timeHint: Record<Time, string> = {
   present: 'thời điểm nói tới là hiện tại',
   future: 'thời điểm nói tới ở tương lai',
 }
-// ...and the row fixes HOW THE ACTION RELATES to that mốc. This is the half
+
+// The ASSEMBLY halves. Every English tense is one pattern (the row) whose
+// first word is then conjugated by the column:
+//   past + continuous  → be(quá khứ)  + V-ing → was/were working
+//   present + perfect  → have(hiện tại) + V3  → have/has worked
+//   future + perfect-continuous → will + have + been + V-ing
+// Printed in the headers so a formula can be built from two pieces instead of
+// memorised whole — which is what makes all twelve cells derivable.
+const aspectFragment: Record<Aspect, string> = {
+  simple: 'chỉ động từ chính',
+  continuous: 'be + V-ing',
+  perfect: 'have + V3',
+  'perfect-continuous': 'have + been + V-ing',
+}
+// "chữ đầu", not "từ đầu": the latter reads far more naturally as the adverbial
+// "from the start" than as "the first word".
+const timeFragment: Record<Time, string> = {
+  past: 'chia chữ đầu ở quá khứ',
+  present: 'chia chữ đầu ở hiện tại',
+  future: 'thêm will, chữ đầu để nguyên thể',
+}
+
+// ...and the row fixes HOW THE ACTION RELATES to that point. This is the half
 // the naive "simple = diễn ra / perfect = hoàn thành" version drops, which is
 // why it can't tell Past Simple from Past Perfect.
 //
@@ -66,17 +88,40 @@ const aspectHint: Record<Aspect, string> = {
   'perfect-continuous': 'kéo dài liên tục tới thời điểm đó',
 }
 
-/** One <td>: the short affirmative formula, wrapped in a <button> so it's
- *  both the visible cell and the click/keyboard target for the popup. */
+/** One <td>: a flip card. Face-up is the example sentence — the same sentence
+ *  across all twelve cells, so only the tense changes — and hovering flips to
+ *  the formula.
+ *
+ *  Both faces are real DOM, so a screen reader gets example AND formula
+ *  regardless of the visual state, and find-in-page matches either.
+ *  :focus-visible flips too, so the formula is reachable by keyboard; on touch,
+ *  where hover doesn't exist, tapping opens the popup which carries the full
+ *  formula anyway. */
 function cellHTML(time: Time, aspect: Aspect): string {
   const t = findTense(time, aspect)
   // time-${time} tints the box by column. The tint is reinforcement only —
   // the column header still names the time in text, so a colourblind reader
   // loses nothing (WCAG 1.4.1), same rule the IPA board follows.
+  //
+  // The star marking a common tense is aria-hidden and paired with sr-only
+  // text, so it isn't announced as "black star" and isn't colour-only either.
+  const badge = t.common
+    ? `<span class="sr-only">Thì thông dụng. </span><span class="common-badge" aria-hidden="true">★</span>`
+    : ''
   return `
     <td>
-      <button type="button" class="tense-cell time-${time}" data-time="${time}" data-aspect="${aspect}">
-        ${t.forms.affirmative}
+      <button type="button" class="tense-cell time-${time}${t.common ? ' is-common' : ''}"
+              data-time="${time}" data-aspect="${aspect}">
+        <span class="cell-inner">
+          <span class="cell-face cell-front">
+            ${badge}
+            <span class="cell-example-en">${t.example.en}</span>
+            <span class="cell-example-vi" lang="vi">${t.example.vi}</span>
+          </span>
+          <span class="cell-face cell-back">
+            <span class="cell-formula">${t.forms.affirmative}</span>
+          </span>
+        </span>
       </button>
     </td>
   `
@@ -136,6 +181,7 @@ function gridHTML(): string {
         <th scope="col" class="time-${t}">
           ${timeLabel[t]}
           <span class="axis-hint" lang="vi">${timeHint[t]}</span>
+          <span class="axis-fragment" lang="vi">${timeFragment[t]}</span>
         </th>
       `,
         )
@@ -149,6 +195,7 @@ function gridHTML(): string {
         <th scope="row">
           ${aspectLabel[a]}
           <span class="axis-hint" lang="vi">${aspectHint[a]}</span>
+          <span class="axis-fragment">${aspectFragment[a]}</span>
         </th>
         ${times.map((t) => cellHTML(t, a)).join('')}
       </tr>
@@ -162,7 +209,15 @@ function gridHTML(): string {
       <!-- Not .tagline: that class is centred for the home-page hero, which
            reads as a stray centred line above a left-aligned table. -->
       <p class="grid-hint">Click a cell for the full formula and examples.</p>
-      <table class="tense-grid">
+
+      <div class="grid-controls">
+        <p class="legend-common">
+          <span class="common-badge" aria-hidden="true">★</span>
+          <span lang="vi">= 5 thì thông dụng nhất, nên học trước</span>
+        </p>
+      </div>
+
+      <table class="tense-grid" id="tense-grid">
         <caption class="sr-only">
           The 12 English tenses arranged by time (columns) and aspect (rows)
         </caption>
@@ -351,7 +406,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     </dialog>
 
     <section aria-labelledby="notes-heading">
-      <h2 id="notes-heading">Notes</h2>
+      <h2 id="notes-heading">⚠️Notes</h2>
       ${notes.map(noteHTML).join('')}
     </section>
   </main>
