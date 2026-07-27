@@ -543,6 +543,10 @@ export type NoteRule = {
 export type Note = {
   title: string
   body: string[] // paragraphs
+  /** Renders the note as a highlighted tip rather than a plain reference
+   *  block. For the one note that is a procedure to follow, not a table to
+   *  look things up in. */
+  highlight?: boolean
   /** Only on notes whose core content is a lookup table. The prose notes
    *  leave this undefined and render body + examples alone. */
   rules?: NoteRule[]
@@ -553,8 +557,54 @@ export type Note = {
 }
 
 export const notes: Note[] = [
-  // First because the grid's Present Simple cell shows "S + V(s/es)" — the
-  // reader meets the s/es formula before any other note applies.
+  // First: this is the procedure for USING the grid, so it outranks the
+  // spelling rules. The grid above shows how a tense is built; this shows how
+  // to pick one — and the third question is the part the matrix cannot answer,
+  // because it turns on facts about the verb, not about time.
+  {
+    title: 'Cách chọn thì: ba câu hỏi',
+    highlight: true,
+    body: [
+      '1. Thời điểm đang nói là thời điểm nào? (hiện tại, quá khứ, tương lai)',
+      '2. Sự vật, hiện tượng được nói tới được diễn tả thế nào tại thời điểm đó?',
+      '3. Ngữ pháp có bắt dùng dạng khác không? (bảng dưới)',
+    ],
+    ruleHeads: ['Trường hợp', 'Bắt buộc dùng', 'Ví dụ'],
+    rules: [
+      {
+        when: 'Động từ chỉ trạng thái (be, know, love…)',
+        then: 'Không dùng thể tiếp diễn',
+        examples: 'He has not been here since Christmas. (KHÔNG: has not been being here)',
+      },
+      {
+        when: 'Thời gian biểu, lịch trình đã định',
+        then: 'Hiện tại đơn',
+        examples: 'The train leaves at 8 a.m. tomorrow. (KHÔNG: will leave)',
+      },
+      {
+        when: 'Cuộc hẹn đã sắp xếp cụ thể',
+        then: 'Hiện tại tiếp diễn',
+        examples: 'I am meeting my dentist at 3 p.m. tomorrow.',
+      },
+      {
+        when: 'Sau if, when, before, after, as soon as',
+        then: 'Hiện tại đơn, không dùng will',
+        examples: 'If it rains, I will stay at home. (KHÔNG: if it will rain)',
+      },
+    ],
+    examples: [
+      {
+        en: 'I lost my keys yesterday. / I have lost my keys.',
+        vi: 'Cùng sự việc, khác thời điểm: hôm qua → quá khứ đơn; bây giờ → hiện tại hoàn thành.',
+      },
+      {
+        en: 'He has not been here since Christmas.',
+        vi: 'Câu 1–2 ra hiện tại hoàn thành tiếp diễn; câu 3 chặn lại vì be là động từ chỉ trạng thái.',
+      },
+    ],
+  },
+  // Then the spelling mechanics: the grid's Present Simple cell shows
+  // "S + V(s/es)", so the reader meets that formula early.
   {
     title: 'Quy tắc thêm s/es (ngôi thứ 3 số ít, hiện tại đơn)',
     body: [

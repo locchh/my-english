@@ -915,6 +915,24 @@ h1 {
   font-size: 0.9rem;
 }
 
+/* The one note that's a procedure rather than a lookup table. Warm fill plus a
+   heavier accent edge lifts it off the grey reference blocks; the bulb and the
+   heading wording carry the same signal, so it doesn't rely on colour alone. */
+.note-tip {
+  background: var(--short);
+  border-left-width: 5px;
+  padding: 0.75rem 1rem;
+}
+
+.note-tip h3 {
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.tip-badge {
+  font-size: 0.95rem;
+}
+
 .note p {
   margin: 0.35rem 0;
 }
