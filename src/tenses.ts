@@ -221,6 +221,13 @@ function gridHTML(): string {
         <caption class="sr-only">
           The 12 English tenses arranged by time (columns) and aspect (rows)
         </caption>
+        <!-- Widths declared here rather than on cells: with table-layout: fixed
+             the <colgroup> is the single place that governs them, so the three
+             tense columns stay exactly equal regardless of content length. -->
+        <colgroup>
+          <col class="col-axis" />
+          ${times.map(() => `<col class="col-time" />`).join('')}
+        </colgroup>
         <thead>${header}</thead>
         <tbody>${rows}</tbody>
       </table>
