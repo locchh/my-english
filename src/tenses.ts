@@ -161,6 +161,10 @@ function ruleHTML(): string {
         Cuối cùng, đừng mặc định rằng <strong>đã / đang / sẽ</strong> luôn ứng với
         một thì tiếng Anh nhất định — xem ghi chú “Lỗi thường gặp khi dịch” ở dưới.
       </p>
+      <p lang="vi">
+        Chưa biết <em>chọn</em> thì nào cho câu của mình? Xem ghi chú
+        <strong>“Cách chọn thì”</strong> ở phần Notes.
+      </p>
     </section>
   `
 }
@@ -388,9 +392,12 @@ function rulesHTML(rules: NoteRule[] | undefined, heads: [string, string, string
  *  English verb names (see, hear, going to) are a minority inside a
  *  Vietnamese sentence, which is what lang on the block is for. */
 function noteHTML(n: Note): string {
+  // The bulb is decorative and aria-hidden — the tip styling is reinforcement,
+  // and a screen reader announcing "light bulb" before the title adds nothing.
+  const bulb = n.highlight ? `<span class="tip-badge" aria-hidden="true">💡</span> ` : ''
   return `
-    <article class="note">
-      <h3 lang="vi">${n.title}</h3>
+    <article class="note${n.highlight ? ' note-tip' : ''}">
+      <h3 lang="vi">${bulb}${n.title}</h3>
       ${n.body.map((p) => `<p lang="vi">${p}</p>`).join('')}
       ${rulesHTML(n.rules, n.ruleHeads)}
       ${examplesHTML(n.examples)}
