@@ -517,16 +517,21 @@ h1 {
 /* The button is just the stage: no fill or border of its own, because each
    face carries them (a border here would stay put while the card turns). */
 .tense-cell {
-  min-height: 76px;
+  display: block;
   padding: 0;
   background: none;
   border: none;
   perspective: 800px;
 }
 
+/* In flow, not absolute. While both faces were absolutely positioned nothing
+   could grow the card, so at narrow widths the longest example (Future Perfect
+   Continuous) wrapped to more lines than the 76px fitted and got clipped. Now
+   the front face is in flow and sets the height; the back is overlaid on it. */
 .cell-inner {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  display: block;
+  width: 100%;
   transform-style: preserve-3d;
   transition: transform 0.45s ease;
 }
@@ -539,8 +544,6 @@ h1 {
 }
 
 .cell-face {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -549,11 +552,30 @@ h1 {
   padding: 0.5rem 0.45rem;
   border: 1px solid;
   border-radius: 8px;
+  /* border-box so padding and border count inside min-height. */
+  box-sizing: border-box;
   /* Keeps the reverse side from showing through mid-turn. */
   backface-visibility: hidden;
 }
 
+/* The front sets the card's height. 108px is measured, not guessed: it clears
+   the tallest card from ~520px up to desktop (the three-line glosses on Past
+   Perfect and Future Perfect Continuous, worst case 107px), so every card in a
+   row settles on exactly this height and the row bottoms stay flush.
+   A `height: 100%` chain would be the textbook way to equalise siblings, but
+   percentage heights can't resolve through a <td> with no definite height — it
+   silently did nothing, so it was measured and removed. Under ~500px the
+   glosses wrap far enough to exceed this and cards grow unevenly; that is
+   preferable to the clipping a fixed height would cause. */
+.cell-front {
+  position: relative;
+  min-height: 108px;
+}
+
+/* Overlaid on the front, so it always matches whatever height the front took. */
 .cell-back {
+  position: absolute;
+  inset: 0;
   transform: rotateY(180deg);
 }
 
@@ -610,6 +632,20 @@ h1 {
   border-spacing: 6px 6px;
   margin-bottom: 2rem;
   font-size: 1rem;
+  /* fixed, not auto. Under `auto` the browser sizes each column to its widest
+     content, which left 173px of dead space beside the row labels (stretched
+     by one long hint line) and made FUTURE 278px against PAST's 196px — the
+     three tense columns weren't even equal. Fixed + the widths below keeps the
+     three columns identical and lets long hints wrap instead of pushing out. */
+  table-layout: fixed;
+}
+
+.tense-grid col.col-axis {
+  width: 22%;
+}
+
+.tense-grid col.col-time {
+  width: 26%;
 }
 
 .tense-grid td {
@@ -645,13 +681,16 @@ h1 {
 
 /* Row headers: plain text, no slab and no left bar. They label the rows; the
    tinted cells are what the eye should land on. */
+/* No white-space: nowrap here. It was inherited by the .axis-hint block, so a
+   long hint ("xảy ra trước thời điểm đó, còn liên quan tới nó") overflowed the
+   column instead of wrapping inside it. The labels themselves are short enough
+   to stay on one line without being forced. */
 .tense-grid tbody th {
   padding: 0.5rem 0.9rem 0.5rem 0;
   font-weight: 600;
   font-size: 0.95rem;
   color: #333;
   text-align: left;
-  white-space: nowrap;
   vertical-align: middle;
 }
 
