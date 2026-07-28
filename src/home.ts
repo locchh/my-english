@@ -51,6 +51,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main>
     <h1>my-english <span aria-hidden="true">🇬🇧</span></h1>
     <p class="tagline">A small set of tools for learning English pronunciation and grammar.</p>
+    <p class="home-quote">“There are no shortcuts — practicing every day is the <strong>ONLY</strong> way.”</p>
     <ul class="home-links">
       ${features.map(card).join('')}
     </ul>

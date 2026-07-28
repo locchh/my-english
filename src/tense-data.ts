@@ -609,10 +609,10 @@ export const notes: Note[] = [
     title: 'Quy tắc thêm s/es (ngôi thứ 3 số ít, hiện tại đơn)',
     body: [
       'Chỉ ngôi thứ 3 số ít mới thêm s/es — I, you, we, they giữ nguyên động từ nguyên mẫu.',
-      // Uncountables have no number, so they can't sit inside "mọi danh từ số
-      // ít" — they're named alongside it instead.
-      'Ngôi thứ 3 số ít không chỉ là he, she, it. Mọi danh từ số ít — và cả danh từ không đếm được — đều thuộc ngôi này: tên riêng (Vietnam, Lan), danh từ đếm được số ít (the cat, my brother), danh từ không đếm được (rain, water, money, time). Tất cả đều đi với động từ thêm s/es: The cat sleeps a lot. / Vietnam has a long coastline. / Water boils at 100 degrees.',
-      'Cách phát âm đuôi này: /ɪz/ sau các âm xì (watches, misses), /s/ sau âm vô thanh (works, stops), /z/ sau âm hữu thanh và nguyên âm (plays, goes). Tra các âm ở trang IPA Converter.',
+      // Uncountables have no number, so they're named alongside "danh từ số ít"
+      // rather than placed inside it.
+      'Ngôi thứ 3 số ít không chỉ là he, she, it: tên riêng (Vietnam, Lan), danh từ đếm được số ít (the cat, my brother) và danh từ không đếm được (rain, water, money) đều thuộc ngôi này — The cat sleeps a lot. / Vietnam has a long coastline. / Water boils at 100 degrees.',
+      'Phát âm đuôi này: /ɪz/ sau âm xì (watches, misses), /s/ sau âm vô thanh (works, stops), /z/ sau âm hữu thanh và nguyên âm (plays, goes). Tra ở trang IPA Converter.',
       'Hai quy tắc “y” bên dưới giống hệt quy tắc thêm -ed: study → studied, play → played.',
     ],
     ruleHeads: ['Động từ tận cùng', 'Thêm', 'Examples'],
@@ -639,10 +639,9 @@ export const notes: Note[] = [
     body: [
       // "trợ động từ" would be wrong for half the examples here: in "Vietnam is
       // beautiful" or "The rain is heavy", is/are is the main (linking) verb.
-      'Chọn dạng của be, have, do theo chủ ngữ, không theo nghĩa của câu. Cùng một thì nhưng chủ ngữ khác nhau thì dạng của các động từ này khác nhau.',
-      'Danh từ số ít, tên riêng và danh từ không đếm được đều tính là ngôi thứ 3 số ít, nên đi với is/was/has/does giống hệt he, she, it.',
-      'Ở quá khứ chỉ có be đổi theo chủ ngữ (was/were); have → had và do → did thì dùng chung cho mọi chủ ngữ.',
-      'Riêng will thì dùng chung cho mọi chủ ngữ, không đổi theo ngôi. Shall chỉ dùng với I và we, mang nghĩa trang trọng hoặc để đưa ra lời đề nghị: Shall we go?',
+      'Chọn dạng của be, have, do theo chủ ngữ, không theo nghĩa của câu.',
+      'Danh từ số ít, tên riêng, danh từ không đếm được, và someone/everyone/nobody… đều tính là ngôi thứ 3 số ít, nên đi với is/was/has/does giống hệt he, she, it.',
+      'Ở quá khứ chỉ có be đổi theo chủ ngữ (was/were); had, did và will thì dùng chung cho mọi ngôi. Shall chỉ dùng với I và we, mang nghĩa trang trọng hoặc để đề nghị: Shall we go?',
     ],
     ruleHeads: ['Chủ ngữ', 'Dạng hiện tại', 'Dạng quá khứ của be, và ví dụ'],
     rules: [
@@ -661,6 +660,13 @@ export const notes: Note[] = [
         examples: 'was — The rain is heavy today.',
       },
       {
+        // everyone/everybody feel plural (they refer to many people) but take
+        // is/has/does — the mistake this row exists to block.
+        when: 'someone, everyone, nobody, everything…',
+        then: 'is · has · does',
+        examples: 'was — Everyone is here. / Nobody has left. / Someone does it.',
+      },
+      {
         when: 'Danh từ số nhiều (the cats, my brothers)',
         then: 'are · have · do',
         examples: 'were — The cats are sleeping.',
@@ -671,13 +677,51 @@ export const notes: Note[] = [
         en: 'The news is good. / My glasses are new.',
         vi: 'Đừng chỉ nhìn chữ s ở cuối: news là danh từ không đếm được nên đi với is, còn glasses luôn ở số nhiều nên đi với are.',
       },
+      {
+        en: 'Everyone is happy. (KHÔNG: Everyone are happy.)',
+        vi: 'everyone, nobody… nói về nhiều người nhưng luôn chia số ít.',
+      },
+    ],
+  },
+  // Directly after the subject table: that one says which auxiliary to pick,
+  // this one says what the main verb does once an auxiliary is in front of it.
+  {
+    title: 'Câu hỏi: sau did/does dùng nguyên mẫu, sau has/had dùng V3',
+    body: [
+      'Trong câu hỏi, trợ động từ đứng đầu đã mang thì rồi, nên động từ chính KHÔNG chia lại nữa. Dạng của nó do chính trợ động từ đó quyết định, và luôn cố định.',
+      'Hai chỗ hay nhầm nhất: did/does đi với nguyên mẫu (Did she work?), còn has/had đi với V3 (Has she worked?).',
+    ],
+    ruleHeads: ['Trợ động từ đứng đầu', 'Động từ chính', 'Ví dụ'],
+    rules: [
+      {
+        when: 'Do / Does / Did',
+        then: 'nguyên mẫu (V)',
+        examples: 'Did she work yesterday? (KHÔNG: Did she worked?)',
+      },
+      {
+        when: 'Have / Has / Had',
+        then: 'V3',
+        examples: 'Has she worked here? (KHÔNG: Has she work?)',
+      },
+      {
+        when: 'Am / Is / Are / Was / Were',
+        then: 'V-ing',
+        examples: 'Is she working now?',
+      },
+      { when: 'Will / Can / May', then: 'nguyên mẫu (V)', examples: 'Will she work tomorrow?' },
+    ],
+    examples: [
+      {
+        en: 'Did she work? / Has she worked?',
+        vi: 'did mang nghĩa quá khứ nên work giữ nguyên mẫu; has thì luôn kéo theo V3.',
+      },
     ],
   },
   {
     title: 'Quy tắc thêm đuôi -ing',
     body: [
-      'Dùng cho tất cả các thì tiếp diễn (be + V-ing) và hoàn thành tiếp diễn (have + been + V-ing).',
-      'Quy tắc gấp đôi phụ âm cuối chỉ áp dụng khi động từ tận cùng bằng phụ âm – nguyên âm – phụ âm VÀ âm tiết cuối được nhấn trọng âm. Vì vậy begin → beginning (trọng âm ở -gin) nhưng open → opening (trọng âm ở o-), còn explain → explaining vì không tận cùng phụ âm – nguyên âm – phụ âm.',
+      'Dùng cho mọi thì tiếp diễn (be + V-ing) và hoàn thành tiếp diễn (have + been + V-ing).',
+      'Chỉ gấp đôi phụ âm cuối khi động từ tận cùng phụ âm – nguyên âm – phụ âm VÀ trọng âm rơi vào âm tiết cuối: begin → beginning, nhưng open → opening (trọng âm ở o-) và explain → explaining (không đúng dạng trên).',
       'Khác với s/es và -ed, đuôi -y không bao giờ đổi trước -ing: study → studying, carry → carrying, play → playing.',
     ],
     ruleHeads: ['Động từ tận cùng', 'Cách thêm', 'Examples'],
@@ -727,9 +771,9 @@ export const notes: Note[] = [
   {
     title: 'Lỗi thường gặp khi dịch: đã / đang / sẽ không ứng cố định với một thì tiếng Anh',
     body: [
-      'Tiếng Việt đánh dấu thể bằng phó từ (đã, đang, sẽ, sắp, vừa) và được phép bỏ hẳn phó từ khi trong câu đã có từ chỉ thời gian: “Hôm qua tôi ăn ở nhà” vẫn là quá khứ. Tiếng Anh thì buộc phải chia động từ, dù câu đã có yesterday hay tomorrow. Vì vậy không dịch được từng chữ một.',
-      'Quan trọng nhất: “đã” KHÔNG phân biệt được quá khứ đơn với hiện tại hoàn thành, còn “đang” KHÔNG tự chọn được thì — chỉ từ chỉ thời gian trong câu mới quyết định. Bảng dưới cho thấy cùng một phó từ tiếng Việt ra ba, bốn thì tiếng Anh khác nhau.',
-      'Riêng các thì hoàn thành tiếp diễn không có phó từ riêng trong tiếng Việt; dấu hiệu là cấu trúc “được + khoảng thời gian … rồi”.',
+      'Tiếng Việt đánh dấu thể bằng phó từ (đã, đang, sẽ, sắp, vừa) và được bỏ hẳn phó từ khi câu đã có từ chỉ thời gian: “Hôm qua tôi ăn ở nhà” vẫn là quá khứ. Tiếng Anh thì luôn phải chia động từ, nên không dịch từng chữ được.',
+      'Quan trọng nhất: “đã” KHÔNG phân biệt được quá khứ đơn với hiện tại hoàn thành, “đang” cũng KHÔNG tự chọn được thì — chỉ từ chỉ thời gian mới quyết định. Bảng dưới cho thấy cùng một phó từ ra ba, bốn thì khác nhau.',
+      'Riêng các thì hoàn thành tiếp diễn không có phó từ riêng trong tiếng Việt; dấu hiệu là “được + khoảng thời gian … rồi”.',
     ],
     ruleHeads: ['Câu tiếng Việt', 'Thì tiếng Anh', 'Câu tiếng Anh'],
     rules: [
@@ -764,9 +808,9 @@ export const notes: Note[] = [
   {
     title: 'Tương lai gần: “going to” và hiện tại tiếp diễn',
     body: [
-      '“Going to” (S + am/is/are + going to + V) dùng cho hai trường hợp tương lai gần: dự định, kế hoạch đã quyết định từ trước lúc nói; và dự đoán có căn cứ trước mắt.',
-      'Hiện tại tiếp diễn (S + am/is/are + V-ing) dùng cho một cuộc hẹn đã sắp xếp cố định — đã chốt thời gian hoặc địa điểm cụ thể, thường là hẹn với người khác.',
-      'Khác với “will”: “will” dùng khi quyết định ngay tại lúc nói, hoặc dự đoán không có căn cứ nào.',
+      '“Going to” (S + am/is/are + going to + V): dự định đã quyết định từ trước lúc nói, hoặc dự đoán có căn cứ trước mắt.',
+      'Hiện tại tiếp diễn (S + am/is/are + V-ing): cuộc hẹn đã sắp xếp cố định — đã chốt thời gian hoặc địa điểm cụ thể, thường là hẹn với người khác.',
+      '“Will”: quyết định ngay tại lúc nói, hoặc dự đoán không có căn cứ nào.',
     ],
     examples: [
       { en: 'I am going to visit my grandma this weekend.', vi: 'Tôi định đi thăm bà vào cuối tuần này. (dự định có sẵn)' },
@@ -777,9 +821,9 @@ export const notes: Note[] = [
   {
     title: 'Động từ chỉ trạng thái: không dùng thể tiếp diễn',
     body: [
-      'Động từ diễn tả trạng thái — tri giác, nhận thức, cảm xúc, sở hữu — chứ không phải hành động thì thường không dùng ở thể tiếp diễn, kể cả khi ý nghĩa là “ngay lúc này”. Dùng thể đơn thay thế.',
-      'Các nhóm thường gặp: tri giác (see, hear, smell, taste), nhận thức (know, understand, believe, remember, forget), cảm xúc (like, love, hate, want, need, prefer), sở hữu (have, own, belong).',
-      'Lưu ý: một số động từ trên còn có nghĩa hành động, và nghĩa đó CÓ dùng thể tiếp diễn — “see” (nhìn thấy) so với “look at” / “watch” (chủ ý xem); “think” (cho rằng) so với “think about” (đang cân nhắc). Chỉ nghĩa trạng thái mới phải giữ thể đơn.',
+      'Động từ chỉ trạng thái — chứ không phải hành động — thì không dùng ở thể tiếp diễn, kể cả khi ý nghĩa là “ngay lúc này”. Dùng thể đơn thay thế.',
+      'Các nhóm thường gặp: tri giác (see, hear, smell, taste), nhận thức (know, understand, believe, remember), cảm xúc (like, love, hate, want, need), sở hữu (have, own, belong).',
+      'Lưu ý: một số động từ trên còn có nghĩa hành động, và nghĩa đó CÓ dùng thể tiếp diễn — “see” (nhìn thấy) so với “watch” (chủ ý xem); “think” (cho rằng) so với “think about” (đang cân nhắc). Chỉ nghĩa trạng thái mới giữ thể đơn.',
     ],
     examples: [
       { en: 'I know the answer.', vi: 'Tôi biết câu trả lời. (KHÔNG nói: I am knowing the answer.)' },
