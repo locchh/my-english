@@ -56,6 +56,43 @@ h1 {
   text-align: center;
 }
 
+/* ---- wide reference blocks on narrow screens ---- */
+
+/* The tense matrix and the IPA chart have a floor below which their columns
+   stop holding their shape — 600px for the matrix, 540px (vowels) and 560px
+   (consonants) for the chart, each measured where it is declared. Left to
+   themselves they push the whole DOCUMENT that wide — at a 375px viewport the
+   tenses page measured 755px, so every paragraph on it ran off-screen and the
+   reader had to scroll sideways to read prose. Wrapping them puts the sideways
+   scroll where it belongs: inside the one block that needs it, while the page
+   itself stays 375px.
+   role="region" + aria-label + tabindex="0" live on the wrapper in the markup,
+   not here: a scroll container that isn't focusable can't be scrolled by
+   keyboard at all, so the far columns become unreachable (axe:
+   scrollable-region-focusable). Verified with a real key press, not just
+   scrollLeft: Tab reaches both wrappers and ArrowRight scrolls them.
+   Sideways scrolling is normally a WCAG 1.4.10 (Reflow) failure at 320px — it is
+   allowed here under that criterion's own exception for content requiring
+   two-dimensional layout, which a time × aspect matrix and an IPA chart are: fold
+   either into one column and the axes it is read along are gone. */
+.scroll-x {
+  overflow-x: auto;
+  /* Where scrollbars overlay rather than reserve space (macOS, touch), the bar
+     paints across the bottom of the content. 2px is not enough to clear a
+     scrollbar — it just stops it landing exactly on the last row's border, which
+     is where it reads as a rendering fault rather than a scrollbar. The tense
+     matrix already has 2rem of margin below it; this is for the IPA grids, which
+     have none. */
+  padding-bottom: 2px;
+}
+
+/* The wrapper is in the tab order, so it needs a visible focus ring like any
+   other focusable element. */
+.scroll-x:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* ---- site nav ---- */
 
 .site-nav {
@@ -211,6 +248,12 @@ h1 {
   background: var(--accent-hover);
 }
 
+/* No overflow-wrap here on purpose. A transcription has no spaces inside a word,
+   so at 1.6rem this looks like the classic long-token overflow — but it isn't:
+   IPA strings carry break opportunities of their own at the stress and length
+   marks. Checked in Chromium at a 320px viewport, the 58-character transcription
+   of "pneumonoultramicroscopicsilicovolcanoconiosis" wrapped into four lines,
+   none of them escaping the 288px box. Re-check before adding a break rule. */
 #result {
   flex-basis: 100%;
   margin: 0.25rem 0 0;
@@ -238,12 +281,31 @@ h1 {
   gap: 4px;
 }
 
+/* Both boards keep their fixed column count at every width — the count is
+   structure, not decoration: 8 consonant columns is one manner row per grid row
+   with each unvoiced/voiced pair side by side (p·b, t·d, tʃ·dʒ, k·g), which a
+   reflowing `auto-fill` would scramble. They scroll inside .scroll-x instead.
+   The min-widths are what keeps the columns EQUAL. `1fr` is minmax(auto, 1fr),
+   so each track's floor is its own min-content: squeeze the grid and the tracks
+   diverge instead of all shrinking (43px next to 69px, measured at 375px). A
+   grid at least n × the widest cell wide has slack for every track, so they all
+   land on the same size. Each number below is that width, measured per board —
+   they differ because the widest cell differs. */
 .vowels {
   grid-template-columns: repeat(7, 1fr);
+  /* Widest vowel cell is ɪə at 71.92px ("/ɪɹ/" over "diphthong"), so equal
+     columns need 7 × 71.92 + 6 gaps × 4px = 528px. 540 is that plus a cushion
+     for platforms whose fonts measure wider. */
+  min-width: 540px;
 }
 
 .consonants {
   grid-template-columns: repeat(8, 1fr);
+  /* Widest consonant cell is p at 64.2px ("p (bật hơi)"), so equal columns need
+     8 × 64.2 + 7 gaps × 4px = 542px. Nudged to 560 for the same cushion — one
+     more column than the vowels but a narrower widest cell, which is why this
+     board's floor is close to the other's rather than proportionally bigger. */
+  min-width: 560px;
 }
 
 .cell {
@@ -569,14 +631,18 @@ h1 {
 }
 
 /* The front sets the card's height. 108px is measured, not guessed: it clears
-   the tallest card from ~520px up to desktop (the three-line glosses on Past
-   Perfect and Future Perfect Continuous, worst case 107px), so every card in a
-   row settles on exactly this height and the row bottoms stay flush.
+   the tallest card (the three-line glosses on Past Perfect and Future Perfect
+   Continuous) so every card in a row settles on exactly this height and the row
+   bottoms stay flush.
    A `height: 100%` chain would be the textbook way to equalise siblings, but
    percentage heights can't resolve through a <td> with no definite height — it
-   silently did nothing, so it was measured and removed. Under ~500px the
-   glosses wrap far enough to exceed this and cards grow unevenly; that is
-   preferable to the clipping a fixed height would cause. */
+   silently did nothing, so it was measured and removed.
+   It holds from a TABLE width of 580px up, measured: at 550–570px the tallest
+   card needs 112px and at 520–540px it needs 129px, so rows in that band are not
+   flush, and narrower still they came out badly uneven (108–181px at a 375px
+   viewport, no two row bottoms lining up). None of that band is reachable any
+   more: .tense-grid has min-width: 600px and scrolls inside .scroll-x, so the
+   table is never laid out narrower than this number was measured for. */
 .cell-front {
   position: relative;
   min-height: 108px;
@@ -635,6 +701,20 @@ h1 {
 
 .tense-grid {
   width: 100%;
+  /* The floor the .scroll-x wrapper scrolls against, set by the CARD height, not
+     by the row label. The label needs less: at this width the axis column
+     measures 125px, and the widest label ("Continuous") needs 96px — 82px of
+     text plus its 14px padding. At the 296px the table got on a 375px phone that
+     column was 59px and the label was cut mid-word.
+     The binding constraint is .cell-front's 108px min-height, which only holds
+     once the glosses stop wrapping to a fourth line. Measured, table width →
+     tallest card's natural height:
+       520–540px → 129px   (Future Perfect Continuous, four lines)
+       550–570px → 112px   (three lines, still 4px over)
+       580px and up → ≤100px, so every card clamps to 108 and rows are flush
+     600px is 580 plus a cushion, because those wrap points move with the
+     platform's system-ui metrics and being 20px early costs nothing but scroll. */
+  min-width: 600px;
   /* separate, so each formula keeps its own rounded box. Only the cells are
      boxes — headers are plain text — which is the whole point: 12 boxes with
      hierarchy instead of 19 boxes competing. */
@@ -983,12 +1063,73 @@ h1 {
 
 .note-rules tbody th {
   font-weight: 600;
-  white-space: nowrap;
 }
 
 /* The transformation itself — the column the reader is scanning for. */
 .rule-then {
   font-weight: 600;
-  white-space: nowrap;
   color: var(--accent);
+}
+
+/* Keeping the "when" and "then" columns each on one line is what lets the eye
+   read the mapping straight across — but unconditionally, it was this page's
+   worst layout bug. A table cannot overflow quietly: it stretched the whole
+   tenses document to 755px inside a 375px viewport, so every paragraph on the
+   page ran off-screen and had to be scrolled to sideways.
+   Measured min-content of the six tables, nowrap vs wrapped:
+     nowrap   607 · 368 · 533 · 407 · 846 · 597   (the -ing rules table is the 846)
+     wrapped  215 · 207 · 234 · 207 · 226 · 204
+   Both sets are constant across viewports — checked at 375/640/900/1280 — so one
+   number governs: nowrap needs 846px of room, wrapping needs 234px.
+   A viewport media query is the wrong instrument for it. What decides whether the
+   line fits is the width of the NOTE, which depends on the body padding and the
+   note's own padding too, so the same viewport gives different answers per page.
+   The container query asks the only question that matters: is this note wide
+   enough to hold the widest table on one line? 880px = the measured 846 plus 34px
+   of slack for platforms whose system-ui metrics run wider. A plain note's inner
+   width is (viewport − 94px), capped at ~970px once the 1000px body column stops
+   growing, so the nowrap switches back on at a 975px viewport (checked: 974 wraps
+   at 879.8px of note, 975 does not at 880.8px) and stays on from there up. */
+.note {
+  container-type: inline-size;
+}
+
+@container (min-width: 880px) {
+  .note-rules tbody th,
+  .note-rules .rule-then {
+    white-space: nowrap;
+  }
+}
+
+/* ---- narrow screens ---- */
+
+/* One breakpoint for the whole site, and it governs spacing only — the two
+   things that actually overflowed are handled where they belong instead: the
+   matrix and the IPA chart by .scroll-x, the notes' tables by a container query
+   on .note. 640px is where the 1000px column stops being the constraint and the
+   device's own width starts being it. */
+@media (max-width: 640px) {
+  /* 2rem on both sides costs 64px of a 375px screen — a sixth of it spent on
+     margin, while the tables inside were fighting for room. */
+  body {
+    padding: 1rem;
+  }
+
+  /* The verb table was 8px wider than the page at 320px (296px min-content in
+     288px), purely from cell padding — 0.75rem × 6 edges is 72px on a table
+     whose content is three short verb forms. 0.25rem brings min-content to
+     282px, measured, which clears 320px.
+     overflow-wrap: anywhere is the backstop, not the mechanism: it lets a long
+     form ("understood") break rather than push the page, so a platform whose
+     fonts measure wider than this Chromium cannot reintroduce the overflow. It
+     only takes effect if a column really is narrower than its longest word.
+     Not wrapped in .scroll-x like the matrix and the chart: this table's <thead>
+     is position: sticky, and inside a scroll container it would stick to that
+     container's top edge instead of the viewport's — the header would stop
+     following the page as you scroll the 119 rows. */
+  .verb-table th,
+  .verb-table td {
+    padding: 0.4rem 0.25rem;
+    overflow-wrap: anywhere;
+  }
 }

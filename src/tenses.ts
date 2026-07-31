@@ -221,20 +221,30 @@ function gridHTML(): string {
         </p>
       </div>
 
-      <table class="tense-grid" id="tense-grid">
-        <caption class="sr-only">
-          The 12 English tenses arranged by time (columns) and aspect (rows)
-        </caption>
-        <!-- Widths declared here rather than on cells: with table-layout: fixed
-             the <colgroup> is the single place that governs them, so the three
-             tense columns stay exactly equal regardless of content length. -->
-        <colgroup>
-          <col class="col-axis" />
-          ${times.map(() => `<col class="col-time" />`).join('')}
-        </colgroup>
-        <thead>${header}</thead>
-        <tbody>${rows}</tbody>
-      </table>
+      <!-- The matrix scrolls sideways on its own instead of widening the page:
+           it has a 600px floor (see .tense-grid min-width) and below that the
+           whole document was being stretched to it, so on a 375px phone the
+           prose ran off-screen too — the document measured 755px.
+           role="region" + aria-label names the scrollable box, and tabindex="0"
+           is what actually makes it scrollable by keyboard — without it the
+           Future column is unreachable without a mouse. -->
+      <div class="scroll-x" role="region" tabindex="0"
+           aria-label="Tense matrix (scrolls sideways on narrow screens)">
+        <table class="tense-grid" id="tense-grid">
+          <caption class="sr-only">
+            The 12 English tenses arranged by time (columns) and aspect (rows)
+          </caption>
+          <!-- Widths declared here rather than on cells: with table-layout: fixed
+               the <colgroup> is the single place that governs them, so the three
+               tense columns stay exactly equal regardless of content length. -->
+          <colgroup>
+            <col class="col-axis" />
+            ${times.map(() => `<col class="col-time" />`).join('')}
+          </colgroup>
+          <thead>${header}</thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
     </section>
   `
 }
