@@ -89,13 +89,28 @@ export function boardHTML(): string {
     <section class="board" aria-labelledby="board-heading">
       <h2 id="board-heading">IPA chart</h2>
       <div class="legend" role="group" aria-label="Colour key">${legend}</div>
+      <!-- Each grid keeps its column count at every width (the count is the
+           chart's structure — see .vowels / .consonants in style.css) and swipes
+           sideways inside .scroll-x rather than widening the page: at a 375px
+           viewport the consonant grid alone made the document 507px.
+           tabindex="0" is not decoration — it is the only thing that lets a
+           keyboard user scroll to the last column. The aria-label is spelled out
+           rather than pointed at the <h3>: the enclosing <section> is already
+           named by that heading, and reusing it would announce two nested
+           regions with the identical name. -->
       <section aria-labelledby="vowels-heading">
         <h3 id="vowels-heading">Vowels</h3>
-        <div class="grid vowels">${vowels.map(cell).join('')}</div>
+        <div class="scroll-x" role="region" tabindex="0"
+             aria-label="Vowel chart (scrolls sideways on narrow screens)">
+          <div class="grid vowels">${vowels.map(cell).join('')}</div>
+        </div>
       </section>
       <section aria-labelledby="consonants-heading">
         <h3 id="consonants-heading">Consonants</h3>
-        <div class="grid consonants">${consonants.map(cell).join('')}</div>
+        <div class="scroll-x" role="region" tabindex="0"
+             aria-label="Consonant chart (scrolls sideways on narrow screens)">
+          <div class="grid consonants">${consonants.map(cell).join('')}</div>
+        </div>
       </section>
     </section>
   `
