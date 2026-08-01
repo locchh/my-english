@@ -12,7 +12,8 @@ export default defineConfig({
                 home: resolve(import.meta.dirname, 'index.html'),
                 ipa: resolve(import.meta.dirname, 'ipa.html'),
                 verbs: resolve(import.meta.dirname, 'verbs.html'),
-                tenses: resolve(import.meta.dirname, 'tenses.html')
+                tenses: resolve(import.meta.dirname, 'tenses.html'),
+                talk: resolve(import.meta.dirname, 'talk.html')
             }
         }
     }

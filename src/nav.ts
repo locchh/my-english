@@ -5,6 +5,7 @@ const items: NavItem[] = [
   { href: 'ipa.html', label: 'IPA Converter' },
   { href: 'verbs.html', label: 'Irregular Verbs' },
   { href: 'tenses.html', label: 'Tenses' },
+  { href: 'talk.html', label: 'Short Talk' },
 ]
 
 // active: current page's href (e.g. 'ipa.html'). The current page stays an

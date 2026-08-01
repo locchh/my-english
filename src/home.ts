@@ -20,6 +20,7 @@ const BOARDS: Board[] = [
   { href: 'ipa.html', title: 'IPA Converter', label: 'pronunciation' },
   { href: 'verbs.html', title: 'Irregular Verbs', label: 'the awkward ones' },
   { href: 'tenses.html', title: 'Tenses', label: 'all twelve' },
+  { href: 'talk.html', title: 'Short Talk', label: 'two minutes' },
 ]
 
 /**

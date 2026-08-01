@@ -1323,6 +1323,304 @@ body.page-home {
   font-style: italic;
 }
 
+/* ---- short talk ---- */
+
+/*
+ * The two phases are separate colours on one track, not one bar that changes
+ * colour as it goes: the first quarter of the track is amber and the rest is
+ * green at all times, so the shape of the two minutes — a short preparation and
+ * a long answer — is legible before the clock has started, and the amber stays
+ * amber behind you once you are speaking.
+ *
+ * Colour is never the only signal. The phase is named in words beside the
+ * readout, and the legend under the track states both durations, because a
+ * viewer who cannot tell amber from green still has to be able to read which
+ * half they are in (WCAG 1.4.1).
+ */
+.talk {
+  --prep-zone: var(--past-bg);
+  /* The lightest amber that still clears 3:1 against both its own pale zone
+     (3.35) and the card behind the track (3.82). Lighter reads more yellow and
+     separates better from the green, but 3:1 is the floor for a graphic that
+     carries meaning, and the next step up drops the zone contrast to 2.98. */
+  --prep-fill: #b8730f;
+  --prep-ink: var(--past-line);
+  --speak-zone: var(--present-bg);
+  --speak-fill: #35804a;
+  --speak-ink: var(--present-line);
+  /* Whichever phase is running owns the readout. Idle and done are neutral —
+     a countdown at rest should not claim to be one of the two phases. */
+  --talk-ink: var(--muted);
+
+  margin: 2rem 0;
+  padding: clamp(1.1rem, 3vw, 1.9rem);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgb(16 35 59 / 0.05),
+    0 10px 28px rgb(16 35 59 / 0.06);
+}
+
+.talk[data-phase='prepare'] {
+  --talk-ink: var(--prep-ink);
+}
+
+.talk[data-phase='speak'] {
+  --talk-ink: var(--speak-ink);
+}
+
+/* A floor, so the clock and the buttons do not jump up the page between a long
+   prompt and the short empty state. */
+.talk-stage {
+  min-height: 12rem;
+}
+
+.talk-empty {
+  margin: 0;
+  max-width: 46ch;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.talk-empty__lead {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.talk-topics {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0 0 0.9rem;
+  padding: 0;
+}
+
+.talk-topics li {
+  padding: 0.1rem 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--short);
+  border-radius: 999px;
+}
+
+/*
+ * The prompt, set as written. Every paragraph the same size and weight — the
+ * content decides its own emphasis, and nothing here second-guesses which line
+ * is the question. Comfortable reading size rather than a heading: it is read
+ * once, quickly, under a clock.
+ */
+.talk-line {
+  margin: 0 0 0.7rem;
+  max-width: 54ch;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.talk-line:last-child {
+  margin-bottom: 0;
+}
+
+.talk-points {
+  margin: 0 0 0.7rem;
+  padding-left: 1.2rem;
+  max-width: 54ch;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.talk-points:last-child {
+  margin-bottom: 0;
+}
+
+.talk-points li::marker {
+  color: var(--border-ui);
+}
+
+.talk-timer {
+  margin-top: 1.75rem;
+}
+
+.talk-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.talk-phase {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--talk-ink);
+}
+
+/* Tabular figures, so the readout does not jitter as the digits change. */
+.talk-time {
+  font-size: clamp(2.1rem, 1.4rem + 3vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--talk-ink);
+}
+
+/*
+ * The track carries both zones; the fill is the same two zones at full
+ * strength, revealed left to right.
+ *
+ * `100cqw` is what makes that work. The fill's width is the progress, so a
+ * gradient sized to the fill would slide its own 25% stop along with it and the
+ * handover would drift. Sizing the background image to the *track* instead
+ * pins the stop at 30 seconds of 120 wherever the fill happens to end.
+ */
+.talk-track {
+  container-type: inline-size;
+  position: relative;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background-image: linear-gradient(
+    90deg,
+    var(--prep-zone) 0 25%,
+    var(--speak-zone) 25% 100%
+  );
+  box-shadow: inset 0 0 0 1px rgb(16 35 59 / 0.09);
+}
+
+.talk-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background-image: linear-gradient(
+    90deg,
+    var(--prep-fill) 0 25%,
+    var(--speak-fill) 25% 100%
+  );
+  background-size: 100cqw 100%;
+  background-repeat: no-repeat;
+  /* Driven per frame from script, so it must not also be animating — a
+     transition would leave the bar lagging its own clock. */
+  transition: none;
+}
+
+/*
+ * A real gap at the handover, cut through the fill in the card's own colour.
+ *
+ * Amber and green can be told apart by hue but they measured 1.08:1 against
+ * each other in luminance, so once the bar was past thirty seconds the two
+ * zones were one solid block to anyone who cannot use hue — in greyscale, or
+ * with the commonest forms of colour blindness. A gap is not a colour, so it
+ * separates them for everybody.
+ */
+.talk-split {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 25%;
+  width: 3px;
+  transform: translateX(-1.5px);
+  background: #fff;
+}
+
+.talk-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.talk-legend__zone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.talk-legend__zone::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: currentcolor;
+}
+
+.talk-legend__zone--prepare {
+  color: var(--prep-ink);
+}
+
+.talk-legend__zone--speak {
+  color: var(--speak-ink);
+}
+
+.talk-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+}
+
+.talk-controls button {
+  padding: 0.65rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.talk-controls button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.talk-controls button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+#talk-stop {
+  color: var(--accent);
+  background: transparent;
+  border-color: var(--border-ui);
+}
+
+#talk-stop:hover:not(:disabled) {
+  background: var(--short);
+  border-color: var(--accent);
+}
+
+/* A disabled control is exempt from the contrast minimum, but it still has to
+   read as "off" rather than as a second live button. */
+#talk-stop:disabled {
+  color: var(--border-ui);
+  background: transparent;
+  border-color: var(--border);
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .talk-controls button {
+    transition: none;
+  }
+}
+
 /* ---- irregular verbs ---- */
 
 /* Visible to screen readers, not on screen. Used for the <caption>, which
