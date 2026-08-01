@@ -120,7 +120,7 @@ h1 {
   cursor: default;
 }
 
-/* ---- home page cards ---- */
+/* ---- shared ---- */
 
 .tagline {
   margin: -0.5rem 0 1rem;
@@ -128,80 +128,1017 @@ h1 {
   color: var(--muted);
 }
 
-/* Personal motto, not a pull-quote from elsewhere — italic and centred like
-   .tagline, but no box or accent bar: it's tone, not a callout. */
-.home-quote {
-  margin: 0 auto 2rem;
-  max-width: 480px;
-  text-align: center;
-  font-style: italic;
-  color: var(--muted);
-}
+/* ---- home: the Big Ben scene ---- */
 
-.home-links {
-  list-style: none;
-  max-width: 620px;
-  margin: 0 auto;
+/* The homepage is a picture with a menu on it, so it gives up the reading
+   column the other three pages sit in. index.html carries .page-home for this;
+   the class is on <body> rather than on .home because the column and the
+   padding are declared on <body>, and a child cannot un-declare them without
+   the 100vw trick that put a horizontal scrollbar on every page (see 164551d). */
+body.page-home {
+  max-width: none;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  /* `margin-inline: auto` on body sets the sides only, so the user agent's own
+     8px top and bottom survive it. Left in place they push a 100svh section 16px
+     past the viewport and the page gains a scrollbar it has no content for. */
+  margin: 0;
 }
 
-/* The <a> is the whole tile, so it's laid out as the flex row itself
-   rather than wrapping a separate box. */
-.card {
+/*
+ * Two palettes for one picture. Every colour in the scene resolves through
+ * these, so the page goes from day to night without a shape being redrawn —
+ * `data-phase` on the section is the only thing that moves.
+ *
+ * The design carried thirty-odd near-identical golds inline. They are collapsed
+ * into six stone tones here: keeping them all would have made the night palette
+ * unmaintainable to no visible end, because #a3874a and #a98c4b are the same
+ * colour to anyone looking at a web page.
+ *
+ * This is scoped artwork and does not reopen the light-only decision for the
+ * rest of the site. The boards stay light at every hour — their tinted cells
+ * are the information, and the contrast ratios on them are hand-verified.
+ */
+.home {
+  /* sky */
+  --sky-top: #4f8fd2;
+  --sky-mid: #6fa9e0;
+  --sky-low: #a5cbeb;
+  --sky-haze: #d6e8f6;
+  --sky-foot: #e8f2fa;
+  --glow-core: rgb(255 244 214 / 0.85);
+  --glow-mid: rgb(255 244 214 / 0.25);
+  --glow-size: 460px;
+  --glow-top: -140px;
+  --glow-right: -120px;
+  --cloud-a: rgb(255 255 255 / 0.9);
+  --cloud-b: rgb(255 255 255 / 0.75);
+  --cloud-c: rgb(255 255 255 / 0.55);
+  --star-opacity: 0;
+  --bird-opacity: 0.7;
+  --bird: #3a4c62;
+
+  /* the tower's stonework, brightest to deepest */
+  --stone-hi: #dcc06c;
+  --stone-lit: #d4b360;
+  --stone-mid: #b3924a;
+  --stone-dark: #96793e;
+  --stone-line: #8a7434;
+  --stone-edge: #7c6733;
+  --stone-deep: #6b5b28;
+
+  /* the slate spire and roof */
+  --slate-dark: #474437;
+  --slate-mid: #66634f;
+  --slate-lit: #8b8872;
+  --slate-shade: #54513f;
+
+  /* openings — dark by day, lit from inside at night */
+  --void: #2e2a1e;
+  --void-lit: #4a4433;
+  --void-bar: #57503a;
+  --win-top: #332d1e;
+  --win-bottom: #4f4832;
+  --win-shadow: inset 4px 0 6px rgb(0 0 0 / 0.35);
+  --tooth: #3c3627;
+
+  /* the dial. Its face does not darken at night — see the night block. */
+  --dial-face-a: #fefbf2;
+  --dial-face-b: #e6ddc2;
+  --bezel-a: #453f2c;
+  --bezel-b: #241f12;
+  --dial-ink: #241f12;
+  --dial-minute: #4a442f;
+  --hand: #191509;
+  --dial-glow: 0 0 0 0 rgb(0 0 0 / 0);
+  --tower-shadow: rgb(20 40 70 / 0.4);
+
+  /* the menu. Title, tagline and quote sit on open sky, which is pale by day
+     and dark by night, so their ink flips; the picks carry their own dark
+     plate at both hours and keep light ink throughout. */
+  --menu-ink: #10233b;
+  /* Measured, not picked by eye. The tagline and the quote are normal-size text
+     on open sky, so they need 4.5:1 against the DARKEST sky they can land on —
+     and because the menu is vertically centred, a short window slides them up
+     the gradient into the deeper blues. Worst case across seven viewports is
+     #6ca6de at 1024x768, where this clears 4.95:1. The obvious lighter #2b4363
+     measured 3.91 there and failed. text-shadow does not count toward the
+     ratio, which is why this is dark rather than merely shadowed. */
+  --menu-ink-dim: #1e3350;
+  --menu-shadow: rgb(255 255 255 / 0.5);
+  --pick-ink: #f4f7fb;
+  --pick-ink-dim: #d3e0ee;
+  --pick-bg: rgb(10 19 38 / 0.62);
+  --pick-bg-hover: rgb(10 19 38 / 0.76);
+  --pick-edge: rgb(255 255 255 / 0.3);
+
+  --tower-scale: 1;
+  --tower-left: clamp(8px, 5vw, 72px);
+  --menu-gutter: clamp(16px, 4vw, 56px);
+  /* The strip down the left the tower stands in, plus a little air. The menu
+     subtracts this from its own width, which is what keeps the two apart at
+     every size without either of them having to know the other's breakpoints —
+     172px is the tower's drawn width, so this tracks --tower-scale for free. */
+  --tower-clear: calc(var(--tower-left) + 172px * var(--tower-scale) + 12px);
+
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--accent);
-  border-radius: 8px;
-  text-decoration: none;
-  color: inherit;
-  background: #fff;
+  justify-content: flex-end;
+  background: linear-gradient(
+    180deg,
+    var(--sky-top) 0%,
+    var(--sky-mid) 38%,
+    var(--sky-low) 70%,
+    var(--sky-haze) 92%,
+    var(--sky-foot) 100%
+  );
+  transition: background 900ms ease;
+}
+
+/*
+ * Night is not the same drawing at 40% brightness. The stonework and the sky go
+ * dark, but the dial keeps its daylight face and gains a warm halo, and the
+ * belfry louvres and shaft windows light from inside — which is what makes it
+ * read as Big Ben after dark rather than as a picture someone dimmed.
+ */
+.home[data-phase='night'] {
+  --sky-top: #070c1c;
+  --sky-mid: #101a33;
+  --sky-low: #1d2b46;
+  --sky-haze: #2b3b56;
+  --sky-foot: #3a4a63;
+  --glow-core: rgb(240 244 255 / 0.95);
+  --glow-mid: rgb(190 208 255 / 0.14);
+  --glow-size: 210px;
+  --glow-top: 7%;
+  --glow-right: 9%;
+  --cloud-a: rgb(116 137 176 / 0.38);
+  --cloud-b: rgb(116 137 176 / 0.28);
+  --cloud-c: rgb(116 137 176 / 0.2);
+  --star-opacity: 1;
+  --bird-opacity: 0;
+
+  --stone-hi: #6d5c33;
+  --stone-lit: #5b4d2b;
+  --stone-mid: #453a22;
+  --stone-dark: #37301d;
+  --stone-line: #2f2917;
+  --stone-edge: #262112;
+  --stone-deep: #1c180d;
+
+  --slate-dark: #1e1f27;
+  --slate-mid: #282a34;
+  --slate-lit: #363945;
+  --slate-shade: #212229;
+
+  --void: #e8b95a;
+  --void-lit: #f5d488;
+  --void-bar: #c08f2c;
+  --win-top: #f2c76a;
+  --win-bottom: #b8801f;
+  --win-shadow: inset 0 0 10px rgb(255 214 130 / 0.65);
+  --tooth: #241f13;
+
+  --dial-glow:
+    0 0 22px 5px rgb(255 226 150 / 0.6),
+    0 0 62px 18px rgb(255 214 120 / 0.28);
+  --tower-shadow: rgb(0 0 0 / 0.55);
+
+  --menu-ink: #eef3fb;
+  --menu-ink-dim: #b9c8de;
+  --menu-shadow: rgb(4 8 18 / 0.7);
+}
+
+/* The scene's colours crossfade at the handover. The clock hands are excluded
+   on purpose — `transform` is not in this list, or the minute hand would sweep
+   backwards through 354 degrees every hour. */
+.home .glow,
+.home .cloud,
+.home .stars,
+.home .bird,
+.home .bigben div,
+.home .bigben span {
   transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    background 0.15s ease;
+    background 900ms ease,
+    border-color 900ms ease,
+    box-shadow 900ms ease,
+    opacity 900ms ease;
 }
 
-.card:hover {
-  background: var(--short);
-  transform: translateX(3px);
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+/* ---- sky ---- */
+
+.sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
 }
 
-.card-emoji {
-  font-size: 2rem;
-  line-height: 1;
-  flex-shrink: 0;
+/* Sun by day, moon by night — one disc that changes size and corner. */
+.glow {
+  position: absolute;
+  top: var(--glow-top);
+  right: var(--glow-right);
+  width: var(--glow-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--glow-core) 0%, var(--glow-mid) 45%, transparent 70%);
+  transition:
+    background 900ms ease,
+    width 900ms ease,
+    top 900ms ease,
+    right 900ms ease;
 }
 
-.card-body {
+.stars {
+  position: absolute;
+  inset: 0;
+  opacity: var(--star-opacity);
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: twinkle 6s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.cloud {
+  position: absolute;
+  left: 0;
+  border-radius: 70px;
+  animation: drift linear infinite;
+}
+
+/* The three banks are the design's, sizes and timings verbatim. The negative
+   delays start them mid-crossing so the sky is not empty for the first minute. */
+.cloud--a {
+  top: 10%;
+  width: 260px;
+  height: 60px;
+  background: var(--cloud-a);
+  filter: blur(16px);
+  animation-duration: 100s;
+}
+
+.cloud--b {
+  top: 24%;
+  width: 170px;
+  height: 42px;
+  background: var(--cloud-b);
+  filter: blur(13px);
+  animation-duration: 140s;
+  animation-delay: -50s;
+}
+
+.cloud--c {
+  top: 40%;
+  width: 210px;
+  height: 48px;
+  background: var(--cloud-c);
+  filter: blur(15px);
+  animation-duration: 170s;
+  animation-delay: -110s;
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(-10vw);
+  }
+  to {
+    transform: translateX(112vw);
+  }
+}
+
+/* One stroked path, not a fill — `overflow: visible` because the round caps at
+   the wingtips reach half a stroke past the viewBox and would be shaved off. */
+.bird {
+  position: absolute;
+  width: 18px;
+  height: 10px;
+  overflow: visible;
+  fill: none;
+  stroke: var(--bird);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: var(--bird-opacity);
+  animation: glide 14s ease-in-out infinite;
+}
+
+@keyframes glide {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(40px, -12px);
+  }
+  100% {
+    transform: translate(90px, 6px);
+    opacity: 0;
+  }
+}
+
+/* ---- the tower ---- */
+
+/*
+ * 172 x 936 at the size it was drawn, and it stays that size: the whole stack
+ * is fitted to the screen by one `transform: scale()`.
+ *
+ * Scaling rather than rebuilding it in fluid units is the whole point. The
+ * blocks below carry pixel stops inside `repeating-linear-gradient`, pixel
+ * vertices inside `clip-path`, and a `mask: radial-gradient(... 38px ... 45px)`
+ * on the minute ring. Converting the widths to container units would leave
+ * every one of those behind, and the tower would come apart as it shrank;
+ * `transform` scales all of it together, for free.
+ *
+ * `position: absolute` is what makes it safe. The unscaled 936px box never
+ * contributes to layout, so no scale factor can push the page taller than the
+ * viewport, and `overflow: hidden` on .home clips the part that rises out of
+ * frame. Anchoring at bottom-left rather than top means the tower keeps its
+ * feet on the ground as it scales — scaling from the centre would leave it
+ * hovering.
+ */
+.bigben {
+  position: absolute;
+  bottom: 0;
+  left: var(--tower-left);
+  width: 172px;
+  height: 936px;
+  transform-origin: bottom left;
+  transform: scale(var(--tower-scale));
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  align-items: center;
+  filter: drop-shadow(-20px 12px 30px var(--tower-shadow));
 }
 
-.card-title {
-  font-size: 1.1rem;
+/* The column's heights add up to exactly 936, so nothing should ever flex. */
+.bigben > * {
+  flex: none;
+}
+
+.bb-rod {
+  width: 3px;
+  height: 26px;
+  background: linear-gradient(90deg, var(--stone-line), var(--stone-hi));
+}
+
+.bb-orb {
+  width: 9px;
+  height: 9px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 65% 35%, var(--stone-hi), var(--stone-line));
+}
+
+.bb-neck {
+  width: 5px;
+  height: 14px;
+  background: linear-gradient(90deg, var(--stone-line), var(--stone-hi));
+}
+
+.bb-ball {
+  width: 15px;
+  height: 15px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 62% 35%, var(--stone-hi), var(--stone-edge));
+}
+
+.bb-spire {
+  position: relative;
+  width: 64px;
+  height: 132px;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background:
+    repeating-linear-gradient(180deg, rgb(0 0 0 / 0.16) 0 3px, transparent 3px 11px),
+    linear-gradient(
+      90deg,
+      var(--slate-dark) 0%,
+      var(--slate-mid) 50%,
+      var(--slate-lit) 76%,
+      var(--slate-shade) 100%
+    );
+}
+
+.bb-spire__seam {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background: rgb(255 246 214 / 0.28);
+}
+
+.bb-spire-foot {
+  display: flex;
+  justify-content: space-between;
+  width: 70px;
+  height: 12px;
+  border-top: 2px solid var(--stone-edge);
+  background: linear-gradient(90deg, var(--stone-dark), var(--stone-hi) 65%, var(--stone-mid));
+}
+
+.bb-horn {
+  width: 5px;
+  height: 18px;
+  margin-top: -8px;
+  background: var(--stone-line);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.bb-belfry-top {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  width: 66px;
+  height: 40px;
+  padding-top: 7px;
+  background: linear-gradient(90deg, var(--stone-mid) 0%, var(--stone-hi) 60%, var(--stone-lit) 100%);
+}
+
+.bb-louvre-sm {
+  width: 8px;
+  height: 26px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, var(--void), var(--void-lit));
+  box-shadow: inset 0 3px 0 var(--stone-line);
+}
+
+.bb-roof {
+  width: 112px;
+  height: 36px;
+  clip-path: polygon(50% 0, 86% 26%, 100% 100%, 0 100%, 14% 26%);
+  background:
+    repeating-linear-gradient(180deg, rgb(0 0 0 / 0.14) 0 3px, transparent 3px 9px),
+    linear-gradient(90deg, var(--slate-shade), var(--slate-lit) 58%, var(--slate-mid));
+}
+
+.bb-roof-band {
+  width: 104px;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, var(--stone-line) 0 7px, var(--stone-hi) 7px 13px);
+}
+
+.bb-belfry {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  width: 100px;
+  height: 62px;
+  padding-top: 8px;
+  background: linear-gradient(90deg, var(--stone-mid) 0%, var(--stone-hi) 62%, var(--stone-lit) 100%);
+}
+
+.bb-louvre {
+  box-sizing: border-box;
+  width: 15px;
+  height: 46px;
+  border: 2px solid var(--stone-line);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: repeating-linear-gradient(180deg, var(--void) 0 4px, var(--void-bar) 4px 7px);
+}
+
+.bb-belfry-band {
+  box-sizing: border-box;
+  width: 112px;
+  height: 12px;
+  border-top: 2px solid var(--stone-deep);
+  border-bottom: 2px solid var(--stone-deep);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--stone-edge) 0 8px,
+    var(--stone-lit) 8px 12px,
+    var(--stone-edge) 12px 20px
+  );
+}
+
+.bb-pinnacles {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 160px;
+  height: 14px;
+}
+
+.bb-pinnacle {
+  width: 12px;
+  height: 34px;
+  background: linear-gradient(90deg, var(--stone-dark), var(--stone-lit));
+  clip-path: polygon(50% 0, 100% 28%, 100% 100%, 0 100%, 0 28%);
+}
+
+.bb-pinnacle-rail {
+  width: 120px;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, var(--stone-line) 0 6px, var(--stone-hi) 6px 11px);
+}
+
+/* ---- the clock ---- */
+
+.bb-clock {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 160px;
+  border: 3px solid var(--stone-edge);
+  background: linear-gradient(90deg, var(--stone-dark) 0%, var(--stone-lit) 60%, var(--stone-mid) 100%);
+}
+
+.bb-clock__inset {
+  position: absolute;
+  inset: 5px;
+  border: 2px solid var(--stone-line);
+  opacity: 0.7;
+}
+
+.bb-clock__lozenge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 106px;
+  height: 106px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border: 3px solid var(--stone-line);
+  background: linear-gradient(45deg, var(--stone-dark), var(--stone-lit));
+}
+
+.bb-clock__bezel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--bezel-a), var(--bezel-b));
+  box-shadow:
+    0 0 0 4px var(--stone-line),
+    0 0 0 6px var(--stone-deep);
+}
+
+/* --dial-glow is empty by day and a warm halo at night; it rides on the same
+   box-shadow list as the face's own inset lighting. */
+.dial {
+  position: relative;
+  width: 98px;
+  height: 98px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, var(--dial-face-a), var(--dial-face-b));
+  box-shadow:
+    inset 0 0 0 3px var(--stone-deep),
+    inset 0 0 18px rgb(107 91 40 / 0.35),
+    var(--dial-glow);
+}
+
+/* The sixty minute marks, drawn as one conic gradient and masked to a ring. */
+.dial__minutes {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, transparent 0 38px, #000 38px 45px, transparent 45px);
+  mask: radial-gradient(circle, transparent 0 38px, #000 38px 45px, transparent 45px);
+  background: repeating-conic-gradient(var(--dial-minute) 0deg 0.8deg, transparent 0.8deg 6deg);
+}
+
+.dial__hairline {
+  position: absolute;
+  inset: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgb(107 91 40 / 0.5);
+}
+
+/*
+ * The hour marks and both hands pivot the same way: the element hangs from the
+ * centre of the dial, and `transform-origin: 50% 100%` puts the pivot at its
+ * foot. The `translate` is what places that foot on the centre — which is why
+ * home.ts writes --deg and never `transform`. Writing `transform` from script
+ * would drop the translate, and the hands would fly off the face.
+ */
+.dial__tick,
+.hand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: 50% 100%;
+  transform: translate(-50%, -100%) rotate(var(--deg, 0deg));
+}
+
+.dial__tick {
+  width: 4px;
+  height: 45px;
+  background: linear-gradient(180deg, var(--dial-ink) 0 11px, transparent 11px);
+}
+
+.hand {
+  background: var(--hand);
+}
+
+.hand--hour {
+  width: 8px;
+  height: 30px;
+  clip-path: polygon(50% 0, 100% 22%, 68% 100%, 32% 100%, 0 22%);
+}
+
+.hand--minute {
+  width: 5px;
+  height: 42px;
+  clip-path: polygon(50% 0, 100% 16%, 72% 100%, 28% 100%, 0 16%);
+}
+
+.dial__boss {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, var(--stone-hi), var(--stone-edge));
+}
+
+/* ---- below the clock ---- */
+
+.bb-diamonds {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  width: 160px;
+  height: 20px;
+  border-top: 3px solid var(--stone-deep);
+  border-bottom: 3px solid var(--stone-deep);
+  background: linear-gradient(90deg, var(--stone-dark), var(--stone-lit) 60%, var(--stone-mid));
+}
+
+.bb-diamond {
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  background: var(--stone-deep);
+}
+
+.bb-shaft {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  width: 144px;
+  height: 330px;
+  padding-top: 22px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 64px, rgb(107 91 40 / 0.55) 64px 67px),
+    repeating-linear-gradient(
+      90deg,
+      var(--stone-mid) 0 9px,
+      var(--stone-lit) 9px 15px,
+      var(--stone-mid) 15px 25px
+    ),
+    linear-gradient(90deg, var(--stone-dark), var(--stone-lit) 60%, var(--stone-mid));
+}
+
+.bb-window {
+  box-sizing: border-box;
+  position: relative;
+  width: 22px;
+  height: 262px;
+  border: 2px solid var(--stone-line);
+  border-radius: 11px 11px 0 0;
+  background: linear-gradient(180deg, var(--win-top) 0%, var(--win-bottom) 100%);
+  box-shadow: var(--win-shadow);
+}
+
+.bb-window__mullion {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--stone-line);
+}
+
+.bb-window__transom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--stone-line);
+}
+
+.bb-base {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 8px;
+  width: 158px;
+  height: 30px;
+  padding-bottom: 5px;
+  border-top: 4px solid var(--stone-deep);
+  background: linear-gradient(90deg, var(--stone-dark), var(--stone-lit) 60%, var(--stone-mid));
+}
+
+.bb-tooth {
+  width: 12px;
+  height: 14px;
+  border-radius: 6px 6px 0 0;
+  background: var(--tooth);
+}
+
+.bb-plinth {
+  width: 172px;
+  height: 18px;
+  border-top: 3px solid var(--stone-deep);
+  background: linear-gradient(90deg, var(--stone-edge), var(--stone-mid) 60%, var(--stone-dark));
+}
+
+/* ---- the menu ---- */
+
+/*
+ * A column that never outgrows the frame: the masthead keeps its height and the
+ * list takes what is left, scrolling inside itself once there are more boards
+ * than fit. Sized against the viewport rather than the parent because the
+ * parent is a `min-height` box — it would grow to fit the list instead of
+ * making the list scroll, and the page would get a scrollbar again.
+ */
+.menu {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  margin: var(--menu-gutter);
+  width: clamp(
+    8rem,
+    calc(100% - var(--tower-clear) - var(--menu-gutter) * 2),
+    23rem
+  );
+  max-height: calc(100svh - var(--menu-gutter) * 2);
+  color: var(--menu-ink);
+  /* The type above the picks sits on open sky, and the sky changes colour twice
+     a day — the shadow is what keeps it readable in both. */
+  text-shadow:
+    0 1px 0 var(--menu-shadow),
+    0 2px 18px var(--menu-shadow);
+}
+
+/* h1 is centred site-wide; here it is the left edge of a column. */
+.menu__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0;
+  text-align: left;
+  font-size: clamp(1.9rem, 5vw, 2.6rem);
+  letter-spacing: 0.01em;
+}
+
+/* Sized off the wordmark so the two always look set together. The flag is 2:1,
+   so 1.5em wide is about 0.75em tall — roughly the height of the lowercase. */
+.menu__flag {
+  flex: none;
+  width: 1.5em;
+  height: auto;
+  border-radius: 1px;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.35));
+}
+
+.menu__tagline {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.95rem;
+  color: var(--menu-ink-dim);
+}
+
+.menu__quote {
+  margin: 0 0 1.25rem;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--menu-ink-dim);
+}
+
+/* The nav passes the height limit through to the list. Both it and the list
+   need `min-height: 0`, because each is a flex item of the one above. */
+.menu__nav {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/*
+ * The list is the part that scrolls. `min-height: 0` is what lets it: a flex
+ * item's floor is its content, so without this the list refuses to shrink below
+ * its full height and pushes the masthead out of the frame instead of
+ * scrolling. The padding is clearance for the focus ring, which `overflow`
+ * would otherwise clip off the first and last items — 5px, because the ring is
+ * a 2px outline at an offset of 3.
+ */
+.menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 5px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pick-edge) transparent;
+}
+
+/* The <a> is the whole tile, so it's laid out as the flex column itself rather
+   than wrapping a separate box — one click target, one tab stop. */
+.pick {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.75rem 1.1rem;
+  border: 1px solid var(--pick-edge);
+  border-radius: 3px;
+  background: var(--pick-bg);
+  backdrop-filter: blur(6px);
+  color: var(--pick-ink);
+  text-decoration: none;
+  text-shadow: none;
+  transition:
+    background 200ms ease,
+    border-color 200ms ease,
+    transform 200ms ease;
+}
+
+.pick:hover,
+.pick:focus-visible {
+  background: var(--pick-bg-hover);
+  border-color: rgb(255 255 255 / 0.6);
+  transform: translateY(-2px);
+}
+
+.pick:focus-visible {
+  outline: 2px solid var(--pick-ink);
+  outline-offset: 3px;
+}
+
+.pick__title {
+  font-size: 1.05rem;
   font-weight: 600;
-  color: var(--accent);
 }
 
-.card-blurb {
-  font-size: 0.85rem;
-  color: var(--muted);
+.pick__label {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pick-ink-dim);
 }
 
-/* Respect a user's reduced-motion setting — the transform is decorative. */
+/* ---- fitting the tower to the screen ---- */
+
+/*
+ * One number per step. 936 x the scale has to leave room for whatever else is
+ * on screen, which on a wide window is nothing — the menu is beside the tower,
+ * not above it — and on a narrow one is the menu itself.
+ */
+@media (max-height: 960px) {
+  .home {
+    --tower-scale: 0.85;
+  }
+}
+
+@media (max-height: 820px) {
+  .home {
+    --tower-scale: 0.74;
+  }
+}
+
+@media (max-height: 700px) {
+  .home {
+    --tower-scale: 0.62;
+  }
+}
+
+@media (max-height: 560px) {
+  .home {
+    --tower-scale: 0.46;
+  }
+}
+
+@media (max-height: 440px) {
+  .home {
+    --tower-scale: 0.34;
+  }
+}
+
+/*
+ * The steps above are set by height, which is the right measure while the menu
+ * is beside the tower rather than under it. On a narrow screen width binds
+ * first: the tower and the menu are dividing 375 pixels, and a tower sized for
+ * an 896-pixel-tall phone would leave the menu about 200 of them. So width caps
+ * the scale, after the height steps and therefore over them.
+ *
+ * The layout itself does not change — Big Ben stays left and the menu right at
+ * every size, because --tower-clear keeps them from meeting.
+ */
+@media (max-width: 700px) {
+  .home {
+    --tower-scale: 0.42;
+  }
+}
+
+@media (max-width: 700px) and (max-height: 620px) {
+  .home {
+    --tower-scale: 0.3;
+  }
+}
+
+@media (max-width: 420px) {
+  .home {
+    --tower-scale: 0.34;
+  }
+}
+
+@media (max-width: 420px) and (max-height: 620px) {
+  .home {
+    --tower-scale: 0.26;
+  }
+}
+
+/* The quote is the first thing to go when there is no height to spare: it is
+   tone, and the menu is the reason the page exists. */
+@media (max-height: 560px) {
+  .menu__quote {
+    display: none;
+  }
+}
+
+/* At 320 the menu is 215px wide, and "my-english" plus the flag needs 213 of
+   them at the size above — it wrapped after the hyphen, to "my-" / "english".
+   Only the very narrowest phones are short of the room. */
+@media (max-width: 340px) {
+  .menu__title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-height: 440px) {
+  .menu__tagline {
+    display: none;
+  }
+  .menu__title {
+    font-size: 1.6rem;
+  }
+  .pick {
+    padding: 0.45rem 0.9rem;
+  }
+}
+
+/* The drifting clouds, the gliding birds and the twinkle are all decorative.
+   The clock is not — it keeps ticking, because it is telling the time. */
 @media (prefers-reduced-motion: reduce) {
-  .card {
+  .cloud,
+  .bird,
+  .star {
+    animation: none;
+  }
+  /* The banks are placed by the drift keyframes, not by `left` — the staggered
+     negative delays are what spread them across the sky. Stopping the animation
+     drops all three back to left: 0, in a stack over the tower, so they need
+     somewhere to stand still. */
+  .cloud--a {
+    transform: translateX(31vw);
+  }
+  .cloud--b {
+    transform: translateX(66vw);
+  }
+  /* All three park to the right of the tower. The tower stands in the leftmost
+     fifth of the frame at every width, and a bank left of that setting is a
+     blurred white smear across the clock face rather than weather. */
+  .cloud--c {
+    transform: translateX(47vw);
+  }
+  .pick {
     transition: none;
   }
-  .card:hover {
+  .pick:hover,
+  .pick:focus-visible {
     transform: none;
   }
 }
