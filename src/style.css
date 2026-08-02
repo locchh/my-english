@@ -1758,10 +1758,81 @@ body.page-home {
 
 /* ---- tenses grid ---- */
 
+/*
+ * A callout, not a caption. As grey 0.85rem prose this said the cells were
+ * clickable and nobody read it — which was most of why the grid looked inert.
+ *
+ * It borrows the page's existing highlight language rather than inventing one:
+ * pale --short fill and a thick accent left border, the same treatment
+ * .note-tip gives the one note that is a procedure rather than a table. Body
+ * colour rather than --muted, because a hint nobody is meant to skip should not
+ * be set in the colour reserved for asides.
+ */
 .grid-hint {
-  margin: -0.25rem 0 1.25rem;
-  font-size: 0.85rem;
-  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: -0.25rem 0 1.4rem;
+  padding: 0.75rem 1.1rem;
+  /* Its own cool near-white rather than one of the palette tints. --short and
+     --past-bg are both warm creams that read as the Past column, and
+     --future-bg is literally the Future column's fill — any of them sitting
+     directly above the grid would look like it was labelling a column. */
+  border: 1px solid #d7e3ee;
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8fbfe 0%, #eef5fb 100%);
+  box-shadow:
+    0 1px 2px rgb(23 48 77 / 0.05),
+    0 6px 16px rgb(23 48 77 / 0.06);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.grid-hint strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* The icon sits in a white disc, which is what stops it reading as an emoji
+   dropped into a paragraph. Decorative: the sentence beside it already says to
+   tap a cell, so this would only be announced as "backhand index pointing up". */
+.grid-hint::before {
+  content: '👆';
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(23 48 77 / 0.14);
+  font-size: 1.05rem;
+  line-height: 1;
+  animation: hint-tap 3.2s ease-in-out infinite;
+}
+
+/*
+ * The finger performs the gesture the sentence is asking for: a press and a
+ * lift, then a long rest.
+ *
+ * The rest is most of the cycle on purpose. This sits above the content a
+ * reader is trying to read, and a movement that never stops stops being a hint
+ * and becomes something to look away from — so it moves for about a fifth of
+ * the time and holds still for the rest.
+ */
+@keyframes hint-tap {
+  0%,
+  78%,
+  100% {
+    transform: translateY(0);
+  }
+  86% {
+    transform: translateY(3px);
+  }
+  94% {
+    transform: translateY(-2px);
+  }
 }
 
 /* The hint is a block so it drops onto its own line under the axis label,
@@ -1895,6 +1966,11 @@ body.page-home {
 @media (prefers-reduced-motion: reduce) {
   .cell-inner {
     transition: none;
+  }
+  /* The callout still reads without the tap — the icon, the border and the
+     sentence all survive; only the gesture goes. */
+  .grid-hint::before {
+    animation: none;
   }
 }
 

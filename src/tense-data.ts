@@ -97,7 +97,7 @@ export const tenses: Tense[] = [
         en: 'He worked in that factory for ten years.',
       },
     ],
-    adverbs: ['yesterday', 'last night/week/month/year', 'ago (two days ago)', 'in 1990', 'when I was young'],
+    adverbs: ['yesterday', 'last night/week/month/year', 'ago (two days ago)', 'in + năm đã qua (in 2024)', 'when I was young'],
   },
   {
     time: 'past',
@@ -171,7 +171,7 @@ export const tenses: Tense[] = [
         en: 'The train had left before we arrived at the station.',
       },
     ],
-    adverbs: ['before', 'after', 'by the time', 'until then', 'already', 'as soon as'],
+    adverbs: ['before / after + vế còn lại ở quá khứ', 'by the time + vế còn lại ở quá khứ', 'until then', 'already', 'as soon as'],
   },
   {
     time: 'past',
@@ -471,7 +471,7 @@ export const tenses: Tense[] = [
         en: 'By the time you arrive, I will have finished the report.',
       },
     ],
-    adverbs: ['by + thời điểm', 'by the time', 'by then', 'before', 'by the end of…'],
+    adverbs: ['by + mốc tương lai (by 2030)', 'by the time + vế còn lại ở tương lai', 'by then', 'before + mốc tương lai', 'by the end of…'],
   },
   {
     time: 'future',
@@ -600,6 +600,118 @@ export const notes: Note[] = [
       {
         en: 'He has not been here since Christmas.',
         vi: 'Câu 1–2 ra hiện tại hoàn thành tiếp diễn; câu 3 chặn lại vì be là động từ chỉ trạng thái.',
+      },
+    ],
+  },
+  // Second: the signal words. Each tense already carries its own list in the
+  // dialog, but that list is only reachable by opening twelve dialogs and
+  // holding them in your head — and the question a learner actually has runs
+  // the other way round ("I see `by the time`, which tense?"). So the same
+  // information is inverted here into one table, on the page, unclicked.
+  //
+  // Every `when` is unique, and that is the whole difficulty of this table:
+  // before, after, by the time and since each point at two or three different
+  // tenses, so the word alone answers nothing. What settles it is the other
+  // clause, which is why the left column carries the word AND that condition.
+  {
+    title: 'Dấu hiệu nhận biết thì',
+    body: [
+      'Dấu hiệu nhận biết là gợi ý, không phải luật. Chúng cho biết nên nghĩ tới thì nào trước; quyết định cuối cùng vẫn là ba câu hỏi ở ghi chú trên.',
+      'Nhiều dấu hiệu dùng chung cho nhiều thì: before, after, by the time, since đều xuất hiện ở cả quá khứ lẫn tương lai. Cái phân biệt chúng là vế còn lại của câu, nên cột “Dấu hiệu” dưới đây ghi kèm điều kiện đó.',
+      'Hai bẫy hay gặp. Thứ nhất, in + năm ra quá khứ đơn khi năm đó đã qua (in 2024) nhưng ra tương lai khi năm đó chưa tới (in 2030) — bản thân chữ in không quyết định gì. Thứ hai, now đi với động từ chỉ trạng thái thì vẫn dùng hiện tại đơn: I understand now, không phải I am understanding now.',
+    ],
+    ruleHeads: ['Dấu hiệu', 'Thì', 'Ví dụ'],
+    rules: [
+      {
+        when: 'now, right now, at the moment, at present',
+        then: 'Hiện tại tiếp diễn',
+        examples: 'She is working now.',
+      },
+      {
+        when: 'Look! / Listen! / Be quiet!',
+        then: 'Hiện tại tiếp diễn',
+        examples: 'Listen! The baby is crying.',
+      },
+      {
+        when: 'always, usually, often, sometimes, every day',
+        then: 'Hiện tại đơn',
+        examples: 'She usually works at home.',
+      },
+      {
+        when: 'yesterday, last week/month/year',
+        then: 'Quá khứ đơn',
+        examples: 'She worked here last year.',
+      },
+      { when: 'ago (two days ago)', then: 'Quá khứ đơn', examples: 'She left two days ago.' },
+      {
+        when: 'in + năm đã qua (in 2024)',
+        then: 'Quá khứ đơn',
+        examples: 'She moved to Ha Noi in 2024.',
+      },
+      {
+        when: 'while + vế còn lại ở quá khứ',
+        then: 'Quá khứ tiếp diễn (vế dài) + quá khứ đơn (vế xen vào)',
+        examples: 'While she was working, the phone rang.',
+      },
+      {
+        when: 'at 8 p.m. last night, at that moment',
+        then: 'Quá khứ tiếp diễn',
+        examples: 'At 8 p.m. last night she was working.',
+      },
+      {
+        when: 'before / after + vế còn lại ở quá khứ',
+        then: 'Quá khứ hoàn thành (việc xảy ra trước)',
+        examples: 'She had worked there before she moved.',
+      },
+      {
+        when: 'by the time + vế còn lại ở quá khứ',
+        then: 'Quá khứ hoàn thành',
+        examples: 'By the time he arrived, she had left.',
+      },
+      {
+        when: 'just, already, yet, ever, never',
+        then: 'Hiện tại hoàn thành',
+        examples: 'She has just finished the report.',
+      },
+      {
+        when: 'since + mốc thời gian, for + khoảng thời gian',
+        then: 'Hiện tại hoàn thành — hoặc HTHT tiếp diễn nếu nhấn vào sự kéo dài',
+        examples: 'She has worked here since 2020.',
+      },
+      {
+        when: 'tomorrow, next week/month/year, soon',
+        then: 'Tương lai đơn',
+        examples: 'She will work tomorrow.',
+      },
+      {
+        when: 'in the future, someday',
+        then: 'Tương lai đơn',
+        examples: 'She will work abroad in the future.',
+      },
+      {
+        when: 'at this time tomorrow, this time next week',
+        then: 'Tương lai tiếp diễn',
+        examples: 'At this time tomorrow she will be working.',
+      },
+      {
+        when: 'by the time + vế còn lại ở tương lai',
+        then: 'Tương lai hoàn thành',
+        examples: 'By the time you arrive, she will have finished.',
+      },
+      {
+        when: 'by + mốc tương lai (by 2030), by then',
+        then: 'Tương lai hoàn thành',
+        examples: 'She will have finished by 2030.',
+      },
+    ],
+    examples: [
+      {
+        en: 'While she was working, the phone rang.',
+        vi: 'while → vế dài chia quá khứ tiếp diễn, vế ngắn xen vào chia quá khứ đơn.',
+      },
+      {
+        en: 'By the time you arrive, she will have finished.',
+        vi: 'by the time + vế còn lại ở tương lai → vế chính chia ở tương lai hoàn thành. Chú ý vế by the time dùng hiện tại đơn (arrive), không dùng will.',
       },
     ],
   },
