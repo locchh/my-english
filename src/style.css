@@ -2279,6 +2279,26 @@ body.page-home {
   font-size: 0.78rem;
 }
 
+/* Sentences, not chips — each line is a caveat you read, so unlike .adverb-list
+   above it keeps its markers and its measure. Muted: this is the footnote to
+   the formula, and it should not out-shout the Form block it qualifies. */
+.tense-notes {
+  margin: 0.5rem 0 0;
+  padding-left: 1.15rem;
+  max-width: 62ch;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.tense-notes li + li {
+  margin-top: 0.25rem;
+}
+
+.tense-notes li::marker {
+  color: var(--border-ui);
+}
+
 .tense-examples {
   list-style: none;
   margin: 0;

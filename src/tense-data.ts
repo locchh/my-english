@@ -57,6 +57,16 @@ export type Tense = {
    *  kept optional so a tense with no distinctive set can omit it rather than
    *  carry a misleading empty list. */
   adverbs?: string[]
+  /** The special cases: what the form above does not tell you. A restriction
+   *  (no continuous with stative verbs), a confusion with a neighbouring tense
+   *  (will vs be going to), or a warning that the tense is rarer than the grid
+   *  makes it look.
+   *
+   *  One line each, and only where there is something real to say — this is the
+   *  last thing in a dialog someone opened to check a formula, so it earns its
+   *  place by being short. Not to be confused with `notes` at module scope,
+   *  which is the page's own reference section below the grid. */
+  notes?: string[]
 }
 
 // Ordered time-major (all of Past, then Present, then Future) purely for
@@ -98,6 +108,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['yesterday', 'last night/week/month/year', 'ago (two days ago)', 'in + năm đã qua (in 2024)', 'when I was young'],
+    notes: [
+      'Động từ bất quy tắc dùng cột V2 — tra ở trang Irregular Verbs.',
+      'Thói quen trong quá khứ nay không còn: dùng used to + V(bare) — He used to smoke.',
+    ],
   },
   {
     time: 'past',
@@ -137,6 +151,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['at 8 p.m. last night', 'at that time', 'at that moment', 'while', 'when', 'as'],
+    notes: [
+      'Không dùng với động từ chỉ trạng thái (know, love, want…).',
+      'Cặp hay đi cùng nhau: while + quá khứ tiếp diễn (việc dài), when + quá khứ đơn (việc ngắn xen vào).',
+    ],
   },
   {
     time: 'past',
@@ -172,6 +190,9 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['before / after + vế còn lại ở quá khứ', 'by the time + vế còn lại ở quá khứ', 'until then', 'already', 'as soon as'],
+    notes: [
+      'Chỉ cần khi thứ tự trước/sau chưa rõ. Đã có before hoặc after thì để cả hai vế ở quá khứ đơn cũng đúng — He left before I arrived.',
+    ],
   },
   {
     time: 'past',
@@ -201,6 +222,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['for + khoảng thời gian', 'since', 'before', 'until then', 'how long'],
+    notes: [
+      'Ít dùng. Chỉ chọn khi cần nhấn vào sự kéo dài liên tục ngay trước mốc quá khứ; còn lại dùng quá khứ hoàn thành.',
+      'Không dùng với động từ chỉ trạng thái.',
+    ],
   },
 
   // ---- Present ----
@@ -256,6 +281,10 @@ export const tenses: Tense[] = [
       'every day/week/year',
       'once a week',
     ],
+    notes: [
+      'Ngôi thứ 3 số ít thêm s/es — xem ghi chú quy tắc thêm s/es ở phần Notes.',
+      'Sau if, when, before, after, as soon as: việc tương lai vẫn chia hiện tại đơn, không dùng will.',
+    ],
   },
   {
     time: 'present',
@@ -293,6 +322,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['now', 'right now', 'at the moment', 'at present', 'today', 'these days', 'Look!', 'Listen!', 'Be quiet!'],
+    notes: [
+      'Không dùng với động từ chỉ trạng thái (know, love, want…).',
+      'always + hiện tại tiếp diễn mang nghĩa phàn nàn: He is always coming late.',
+    ],
   },
   {
     time: 'present',
@@ -351,6 +384,10 @@ export const tenses: Tense[] = [
       'up to now',
       'several times',
     ],
+    notes: [
+      'Không đi với mốc quá khứ xác định (yesterday, in 2020) — những mốc đó dùng quá khứ đơn.',
+      'have been to = đã đi và đã về; have gone to = đã đi, chưa về.',
+    ],
   },
   {
     time: 'present',
@@ -382,6 +419,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['for + khoảng thời gian', 'since', 'all day', 'all morning', 'recently', 'lately', 'how long'],
+    notes: [
+      'Nhấn vào quá trình kéo dài; hiện tại hoàn thành nhấn vào kết quả.',
+      'Không dùng với động từ chỉ trạng thái.',
+    ],
   },
 
   // ---- Future ----
@@ -417,6 +458,11 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['tomorrow', 'next week/month/year', 'soon', 'in the future', 'someday', 'I think/believe/hope…'],
+    notes: [
+      'will so với be going to: will là quyết định ngay lúc nói hoặc dự đoán không có căn cứ; be going to là dự định đã có sẵn hoặc dự đoán có căn cứ trước mắt.',
+      'Sau if, when, before, after không dùng will — If it rains, I will stay at home.',
+      'shall chỉ dùng với I/we, trong văn trang trọng hoặc khi đề nghị: Shall we go?',
+    ],
   },
   {
     time: 'future',
@@ -447,6 +493,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['at this time tomorrow', 'at 8 p.m. tomorrow', 'this time next week', 'all day tomorrow'],
+    notes: [
+      'Ít dùng. Nhấn vào việc sẽ đang diễn ra tại một mốc tương lai.',
+      'Cũng dùng để hỏi lịch một cách lịch sự: Will you be using the car tonight?',
+    ],
   },
   {
     time: 'future',
@@ -472,6 +522,9 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['by + mốc tương lai (by 2030)', 'by the time + vế còn lại ở tương lai', 'by then', 'before + mốc tương lai', 'by the end of…'],
+    notes: [
+      'Vế sau by the time chia hiện tại đơn, không dùng will — By the time you arrive, she will have finished.',
+    ],
   },
   {
     time: 'future',
@@ -507,6 +560,9 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['by + thời điểm … for + khoảng thời gian', 'by then', 'by the time'],
+    notes: [
+      'Rất ít dùng. Nhấn vào tổng thời gian kéo dài tính đến một mốc tương lai.',
+    ],
   },
 ]
 

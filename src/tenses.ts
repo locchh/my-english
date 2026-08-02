@@ -339,6 +339,19 @@ function adverbsHTML(adverbs: string[] | undefined): string {
   `
 }
 
+/** The special cases for one tense. Last in the dialog, because it is what you
+ *  read after the formula rather than instead of it. Returns nothing when a
+ *  tense has none, so no tense carries an empty heading. */
+function tenseNotesHTML(notes: string[] | undefined): string {
+  if (!notes?.length) return ''
+  return `
+    <h3 lang="vi">Ghi chú</h3>
+    <ul class="tense-notes" lang="vi">
+      ${notes.map((n) => `<li>${n}</li>`).join('')}
+    </ul>
+  `
+}
+
 /** Shared by the dialog's tense examples and each note's examples — same
  *  en/vi pair shape, same list markup. */
 function examplesHTML(examples: TenseExample[]): string {
@@ -369,6 +382,7 @@ function tenseDetailHTML(t: Tense): string {
     <h3>Usage</h3>
     ${usagesHTML(t.usages)}
     ${adverbsHTML(t.adverbs)}
+    ${tenseNotesHTML(t.notes)}
   `
 }
 
