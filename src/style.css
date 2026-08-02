@@ -1352,7 +1352,8 @@ body.page-home {
      a countdown at rest should not claim to be one of the two phases. */
   --talk-ink: var(--muted);
 
-  margin: 2rem 0;
+  /* Top margin is 0: .talk-tags sits directly above and carries the gap. */
+  margin: 0 0 2rem;
   padding: clamp(1.1rem, 3vw, 1.9rem);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -1370,10 +1371,121 @@ body.page-home {
   --talk-ink: var(--speak-ink);
 }
 
+/* ---- topic filter ---- */
+
+/* Sits above the card rather than in it: the card is one prompt and its clock,
+   this is what decides which prompts it can draw, and it outlives every run.
+   No rule beneath it — the card's own edge is already the separation. */
+.talk-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 1.5rem 0 0.9rem;
+}
+
+.talk-tags__label {
+  margin-right: 0.15rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.talk-tags__hint {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.talk-tag {
+  padding: 0.3rem 0.85rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--accent);
+  background: #fff;
+  border: 1px solid var(--border-ui);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.talk-tag:hover {
+  background: var(--short);
+}
+
+/*
+ * Pressed state carries weight and a thicker darker edge, not just fill.
+ * aria-pressed tells assistive tech, but a sighted reader who cannot separate
+ * the two blues needs the difference in something other than colour — same
+ * rule the rest of this stylesheet works to.
+ */
+.talk-tag[aria-pressed='true'] {
+  color: #fff;
+  font-weight: 600;
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px #fff;
+}
+
+.talk-tag[aria-pressed='true']:hover {
+  background: var(--accent-hover);
+}
+
+.talk-tag:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .talk-tag {
+    transition: none;
+  }
+}
+
 /* A floor, so the clock and the buttons do not jump up the page between a long
    prompt and the short empty state. */
 .talk-stage {
   min-height: 12rem;
+}
+
+/* ---- ARES ---- */
+
+/*
+ * One paragraph, set quiet, below the fold of the empty state — a suggestion
+ * for when nothing comes to mind, not a structure to speak inside. It was a
+ * four-row list with a blank per step, which read as a form to fill in; four
+ * labelled slots make every answer the same shape and put the speaker's
+ * attention on the format instead of on what they mean.
+ */
+.ares {
+  margin: 1.25rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--border);
+  max-width: 62ch;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.ares strong {
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.ares__vi {
+  font-style: italic;
+}
+
+/* Its own line: it is an example, and inline it read as part of the sentence
+   describing the method rather than as a demonstration of it. */
+.ares__ex {
+  display: block;
+  margin: 0.35rem 0;
+  font-style: italic;
 }
 
 .talk-empty {
@@ -1758,10 +1870,81 @@ body.page-home {
 
 /* ---- tenses grid ---- */
 
+/*
+ * A callout, not a caption. As grey 0.85rem prose this said the cells were
+ * clickable and nobody read it — which was most of why the grid looked inert.
+ *
+ * It borrows the page's existing highlight language rather than inventing one:
+ * pale --short fill and a thick accent left border, the same treatment
+ * .note-tip gives the one note that is a procedure rather than a table. Body
+ * colour rather than --muted, because a hint nobody is meant to skip should not
+ * be set in the colour reserved for asides.
+ */
 .grid-hint {
-  margin: -0.25rem 0 1.25rem;
-  font-size: 0.85rem;
-  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: -0.25rem 0 1.4rem;
+  padding: 0.75rem 1.1rem;
+  /* Its own cool near-white rather than one of the palette tints. --short and
+     --past-bg are both warm creams that read as the Past column, and
+     --future-bg is literally the Future column's fill — any of them sitting
+     directly above the grid would look like it was labelling a column. */
+  border: 1px solid #d7e3ee;
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8fbfe 0%, #eef5fb 100%);
+  box-shadow:
+    0 1px 2px rgb(23 48 77 / 0.05),
+    0 6px 16px rgb(23 48 77 / 0.06);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.grid-hint strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* The icon sits in a white disc, which is what stops it reading as an emoji
+   dropped into a paragraph. Decorative: the sentence beside it already says to
+   tap a cell, so this would only be announced as "backhand index pointing up". */
+.grid-hint::before {
+  content: '👆';
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(23 48 77 / 0.14);
+  font-size: 1.05rem;
+  line-height: 1;
+  animation: hint-tap 3.2s ease-in-out infinite;
+}
+
+/*
+ * The finger performs the gesture the sentence is asking for: a press and a
+ * lift, then a long rest.
+ *
+ * The rest is most of the cycle on purpose. This sits above the content a
+ * reader is trying to read, and a movement that never stops stops being a hint
+ * and becomes something to look away from — so it moves for about a fifth of
+ * the time and holds still for the rest.
+ */
+@keyframes hint-tap {
+  0%,
+  78%,
+  100% {
+    transform: translateY(0);
+  }
+  86% {
+    transform: translateY(3px);
+  }
+  94% {
+    transform: translateY(-2px);
+  }
 }
 
 /* The hint is a block so it drops onto its own line under the axis label,
@@ -1895,6 +2078,11 @@ body.page-home {
 @media (prefers-reduced-motion: reduce) {
   .cell-inner {
     transition: none;
+  }
+  /* The callout still reads without the tap — the icon, the border and the
+     sentence all survive; only the gesture goes. */
+  .grid-hint::before {
+    animation: none;
   }
 }
 
@@ -2201,6 +2389,26 @@ body.page-home {
   border-radius: 999px;
   background: #fafafa;
   font-size: 0.78rem;
+}
+
+/* Sentences, not chips — each line is a caveat you read, so unlike .adverb-list
+   above it keeps its markers and its measure. Muted: this is the footnote to
+   the formula, and it should not out-shout the Form block it qualifies. */
+.tense-notes {
+  margin: 0.5rem 0 0;
+  padding-left: 1.15rem;
+  max-width: 62ch;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.tense-notes li + li {
+  margin-top: 0.25rem;
+}
+
+.tense-notes li::marker {
+  color: var(--border-ui);
 }
 
 .tense-examples {

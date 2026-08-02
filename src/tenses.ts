@@ -165,6 +165,12 @@ function ruleHTML(): string {
         Chưa biết <em>chọn</em> thì nào cho câu của mình? Xem ghi chú
         <strong>“Cách chọn thì”</strong> ở phần Notes.
       </p>
+      <p lang="vi">
+        Gặp một chữ như <em>while</em>, <em>by the time</em>, <em>ago</em> mà chưa
+        biết nó ứng với thì nào? Xem bảng
+        <strong>“Dấu hiệu nhận biết thì”</strong> ở phần Notes — cùng một chữ có
+        thể ra hai thì khác nhau, nên bảng ghi kèm điều kiện phân biệt.
+      </p>
     </section>
   `
 }
@@ -212,7 +218,13 @@ function gridHTML(): string {
       <h2 id="grid-heading">The 12 tenses</h2>
       <!-- Not .tagline: that class is centred for the home-page hero, which
            reads as a stray centred line above a left-aligned table. -->
-      <p class="grid-hint">Click a cell for the full formula and examples.</p>
+      <!-- Vietnamese, like every other hint on this page. In English it read as
+           a caption on a page a learner is scanning in Vietnamese, which is
+           most of why the cells were not being clicked. -->
+      <p class="grid-hint" lang="vi">
+        <strong>Bấm vào một ô</strong> để xem đầy đủ công thức, cách dùng và dấu
+        hiệu nhận biết của thì đó.
+      </p>
 
       <div class="grid-controls">
         <p class="legend-common">
@@ -327,6 +339,19 @@ function adverbsHTML(adverbs: string[] | undefined): string {
   `
 }
 
+/** The special cases for one tense. Last in the dialog, because it is what you
+ *  read after the formula rather than instead of it. Returns nothing when a
+ *  tense has none, so no tense carries an empty heading. */
+function tenseNotesHTML(notes: string[] | undefined): string {
+  if (!notes?.length) return ''
+  return `
+    <h3 lang="vi">Ghi chú</h3>
+    <ul class="tense-notes" lang="vi">
+      ${notes.map((n) => `<li>${n}</li>`).join('')}
+    </ul>
+  `
+}
+
 /** Shared by the dialog's tense examples and each note's examples — same
  *  en/vi pair shape, same list markup. */
 function examplesHTML(examples: TenseExample[]): string {
@@ -357,6 +382,7 @@ function tenseDetailHTML(t: Tense): string {
     <h3>Usage</h3>
     ${usagesHTML(t.usages)}
     ${adverbsHTML(t.adverbs)}
+    ${tenseNotesHTML(t.notes)}
   `
 }
 

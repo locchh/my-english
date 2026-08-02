@@ -40,6 +40,29 @@ interface ShortTalk {
 
 const TALKS = talkData as ShortTalk[]
 
+/**
+ * The topic filter, in chip order.
+ *
+ * Only categories something is actually filed under get a chip — an empty chip
+ * is a dead end, and a chip that always returns the same one prompt is barely
+ * better. Listed in a fixed order rather than in the order they happen to
+ * appear in the data, so the row does not reshuffle when a prompt is added.
+ */
+const CATEGORIES: { id: string; label: string }[] = [
+  { id: 'work', label: 'Work' },
+  { id: 'personal', label: 'Personal' },
+  { id: 'society', label: 'Society' },
+  { id: 'future', label: 'Future' },
+].filter((c) => TALKS.some((t) => t.topics?.includes(c.id)))
+
+/** Empty means everything. Selecting nothing is the same question as selecting
+ *  all of them, and making the user tick four boxes to get the default would be
+ *  a worse way to say so. */
+const selected = new Set<string>()
+
+const pool = (): ShortTalk[] =>
+  selected.size ? TALKS.filter((t) => t.topics?.some((x) => selected.has(x))) : TALKS
+
 /** Seconds. The two phases and the whole run. */
 const PREPARE = 30
 const SPEAK = 90
@@ -121,13 +144,43 @@ const promptHTML = (t: ShortTalk): string => {
   return `${chips}${out.join('')}`
 }
 
-const EMPTY = `
-  <p class="talk-empty">
-    <span class="talk-empty__lead">Press Start for a prompt.</span>
-    30 seconds to think, 90 seconds to answer out loud.
-    ${TALKS.length} prompts — you will see every one before any comes round again.
+/**
+ * ARES, offered once here and nowhere else.
+ *
+ * It is deliberately not a template with a blank per step. Four labelled slots
+ * to fill in turns speaking into form-filling: you stop listening to your own
+ * answer and start checking which box you are in, and every answer comes out
+ * the same shape. It belongs on the idle screen as something to fall back on
+ * when the mind goes blank — which is the failure this whole drill exists to
+ * fix — and it disappears the moment a prompt is on, because by then the
+ * question is what you have to say, not what order to say it in.
+ */
+const aresHTML = (): string => `
+  <p class="ares">
+    Stuck for a way in? <strong>ARES</strong> — agree, reason, explain,
+    substitution <span class="ares__vi" lang="vi">(thay thế)</span>.
+    <span class="ares__ex">
+      “Yeah, I remember a serious mistake… Because I… If I had the chance I’d
+      never do it again, and I will…”
+    </span>
+    A way in, not a rule — drop it as soon as you have something to say.
   </p>
 `
+
+/** The idle stage. The count follows the current selection — a fixed total
+ *  would be a lie the moment a tag is on. */
+const emptyHTML = (): string => {
+  const n = pool().length
+  return `
+    <p class="talk-empty">
+      <span class="talk-empty__lead">Press Start for a prompt.</span>
+      30 seconds to think, 90 seconds to answer out loud.
+      ${n} prompt${n === 1 ? '' : 's'} in this selection — you will see every one
+      before any comes round again.
+    </p>
+    ${aresHTML()}
+  `
+}
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   ${navHTML('talk.html')}
@@ -137,8 +190,30 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       A prompt and two minutes. Answer out loud — the clock is the exercise.
     </p>
 
+    <!--
+      Above the card, not inside it. The card is one prompt and its clock; the
+      filter is what decides which prompts the card can draw at all, and it
+      outlives every run. It also grows — four categories now, more later — and
+      inside the card that growth would push the prompt down the page.
+
+      Outside .talk-stage matters for a second reason: the stage's innerHTML is
+      replaced on every draw and on Stop, so chips living in there would be
+      destroyed along with whatever was listening to them. One delegated
+      listener on this container, bound once, survives all of it.
+    -->
+    <div class="talk-tags" id="talk-tags" role="group" aria-label="Topics">
+      <span class="talk-tags__label">Topics</span>
+      ${CATEGORIES.map(
+        (c) => `
+        <button type="button" class="talk-tag" data-topic="${c.id}" aria-pressed="false">
+          ${c.label}
+        </button>`,
+      ).join('')}
+      <span class="talk-tags__hint">none selected = everything</span>
+    </div>
+
     <section class="talk" data-phase="idle" aria-label="Short talk">
-      <div class="talk-stage" id="talk-stage">${EMPTY}</div>
+      <div class="talk-stage" id="talk-stage">${emptyHTML()}</div>
 
       <div class="talk-timer">
         <div class="talk-head">
@@ -183,8 +258,15 @@ const fillEl = document.querySelector<HTMLElement>('#talk-fill')!
 const goBtn = document.querySelector<HTMLButtonElement>('#talk-go')!
 const stopBtn = document.querySelector<HTMLButtonElement>('#talk-stop')!
 const statusEl = document.querySelector<HTMLElement>('#talk-status')!
+const tagsEl = document.querySelector<HTMLElement>('#talk-tags')!
 
-const nextTalk = makeBag(TALKS)
+/**
+ * The bag is rebuilt whenever the selection changes, which is what starts a
+ * fresh shuffle over the new pool. Including the change back to nothing
+ * selected: zero tags means the full set, and that is a different pool from
+ * the filtered one it replaces, not the absence of a change.
+ */
+let nextTalk = makeBag(pool())
 
 let frame: number | undefined
 let startedAt = 0
@@ -263,6 +345,29 @@ stopBtn.addEventListener('click', () => {
   shown = 'idle'
   paint('idle', 0)
   goBtn.textContent = 'Start'
-  stage.innerHTML = EMPTY
+  stage.innerHTML = emptyHTML()
   statusEl.textContent = 'Stopped.'
+})
+
+/*
+ * Toggling a tag mid-run leaves the run alone: the clock keeps its time and the
+ * prompt on screen stays, because the new selection is about what comes next
+ * and pulling the question out from under someone who is answering it would be
+ * the opposite of the exercise. The alternative — disabling the chips while the
+ * clock runs — is a worse cure than the problem.
+ */
+tagsEl.addEventListener('click', (e) => {
+  const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.talk-tag')
+  if (!btn) return
+
+  const id = btn.dataset.topic!
+  if (selected.has(id)) selected.delete(id)
+  else selected.add(id)
+  btn.setAttribute('aria-pressed', String(selected.has(id)))
+
+  nextTalk = makeBag(pool())
+  // The idle stage prints the count, so it is stale the moment this changes.
+  // Mid-run the stage holds a prompt, which is not ours to overwrite.
+  if (root.dataset.phase === 'idle') stage.innerHTML = emptyHTML()
+  statusEl.textContent = `${pool().length} prompts in this selection.`
 })

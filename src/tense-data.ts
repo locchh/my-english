@@ -57,6 +57,16 @@ export type Tense = {
    *  kept optional so a tense with no distinctive set can omit it rather than
    *  carry a misleading empty list. */
   adverbs?: string[]
+  /** The special cases: what the form above does not tell you. A restriction
+   *  (no continuous with stative verbs), a confusion with a neighbouring tense
+   *  (will vs be going to), or a warning that the tense is rarer than the grid
+   *  makes it look.
+   *
+   *  One line each, and only where there is something real to say — this is the
+   *  last thing in a dialog someone opened to check a formula, so it earns its
+   *  place by being short. Not to be confused with `notes` at module scope,
+   *  which is the page's own reference section below the grid. */
+  notes?: string[]
 }
 
 // Ordered time-major (all of Past, then Present, then Future) purely for
@@ -97,7 +107,11 @@ export const tenses: Tense[] = [
         en: 'He worked in that factory for ten years.',
       },
     ],
-    adverbs: ['yesterday', 'last night/week/month/year', 'ago (two days ago)', 'in 1990', 'when I was young'],
+    adverbs: ['yesterday', 'last night/week/month/year', 'ago (two days ago)', 'in + năm đã qua (in 2024)', 'when I was young'],
+    notes: [
+      'Động từ bất quy tắc dùng cột V2 — tra ở trang Irregular Verbs.',
+      'Thói quen trong quá khứ nay không còn: dùng used to + V(bare) — He used to smoke.',
+    ],
   },
   {
     time: 'past',
@@ -137,6 +151,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['at 8 p.m. last night', 'at that time', 'at that moment', 'while', 'when', 'as'],
+    notes: [
+      'Không dùng với động từ chỉ trạng thái (know, love, want…).',
+      'Cặp hay đi cùng nhau: while + quá khứ tiếp diễn (việc dài), when + quá khứ đơn (việc ngắn xen vào).',
+    ],
   },
   {
     time: 'past',
@@ -171,7 +189,10 @@ export const tenses: Tense[] = [
         en: 'The train had left before we arrived at the station.',
       },
     ],
-    adverbs: ['before', 'after', 'by the time', 'until then', 'already', 'as soon as'],
+    adverbs: ['before / after + vế còn lại ở quá khứ', 'by the time + vế còn lại ở quá khứ', 'until then', 'already', 'as soon as'],
+    notes: [
+      'Chỉ cần khi thứ tự trước/sau chưa rõ. Đã có before hoặc after thì để cả hai vế ở quá khứ đơn cũng đúng — He left before I arrived.',
+    ],
   },
   {
     time: 'past',
@@ -201,6 +222,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['for + khoảng thời gian', 'since', 'before', 'until then', 'how long'],
+    notes: [
+      'Ít dùng. Chỉ chọn khi cần nhấn vào sự kéo dài liên tục ngay trước mốc quá khứ; còn lại dùng quá khứ hoàn thành.',
+      'Không dùng với động từ chỉ trạng thái.',
+    ],
   },
 
   // ---- Present ----
@@ -256,6 +281,10 @@ export const tenses: Tense[] = [
       'every day/week/year',
       'once a week',
     ],
+    notes: [
+      'Ngôi thứ 3 số ít thêm s/es — xem ghi chú quy tắc thêm s/es ở phần Notes.',
+      'Sau if, when, before, after, as soon as: việc tương lai vẫn chia hiện tại đơn, không dùng will.',
+    ],
   },
   {
     time: 'present',
@@ -293,6 +322,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['now', 'right now', 'at the moment', 'at present', 'today', 'these days', 'Look!', 'Listen!', 'Be quiet!'],
+    notes: [
+      'Không dùng với động từ chỉ trạng thái (know, love, want…).',
+      'always + hiện tại tiếp diễn mang nghĩa phàn nàn: He is always coming late.',
+    ],
   },
   {
     time: 'present',
@@ -351,6 +384,10 @@ export const tenses: Tense[] = [
       'up to now',
       'several times',
     ],
+    notes: [
+      'Không đi với mốc quá khứ xác định (yesterday, in 2020) — những mốc đó dùng quá khứ đơn.',
+      'have been to = đã đi và đã về; have gone to = đã đi, chưa về.',
+    ],
   },
   {
     time: 'present',
@@ -382,6 +419,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['for + khoảng thời gian', 'since', 'all day', 'all morning', 'recently', 'lately', 'how long'],
+    notes: [
+      'Nhấn vào quá trình kéo dài; hiện tại hoàn thành nhấn vào kết quả.',
+      'Không dùng với động từ chỉ trạng thái.',
+    ],
   },
 
   // ---- Future ----
@@ -417,6 +458,11 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['tomorrow', 'next week/month/year', 'soon', 'in the future', 'someday', 'I think/believe/hope…'],
+    notes: [
+      'will so với be going to: will là quyết định ngay lúc nói hoặc dự đoán không có căn cứ; be going to là dự định đã có sẵn hoặc dự đoán có căn cứ trước mắt.',
+      'Sau if, when, before, after không dùng will — If it rains, I will stay at home.',
+      'shall chỉ dùng với I/we, trong văn trang trọng hoặc khi đề nghị: Shall we go?',
+    ],
   },
   {
     time: 'future',
@@ -447,6 +493,10 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['at this time tomorrow', 'at 8 p.m. tomorrow', 'this time next week', 'all day tomorrow'],
+    notes: [
+      'Ít dùng. Nhấn vào việc sẽ đang diễn ra tại một mốc tương lai.',
+      'Cũng dùng để hỏi lịch một cách lịch sự: Will you be using the car tonight?',
+    ],
   },
   {
     time: 'future',
@@ -471,7 +521,10 @@ export const tenses: Tense[] = [
         en: 'By the time you arrive, I will have finished the report.',
       },
     ],
-    adverbs: ['by + thời điểm', 'by the time', 'by then', 'before', 'by the end of…'],
+    adverbs: ['by + mốc tương lai (by 2030)', 'by the time + vế còn lại ở tương lai', 'by then', 'before + mốc tương lai', 'by the end of…'],
+    notes: [
+      'Vế sau by the time chia hiện tại đơn, không dùng will — By the time you arrive, she will have finished.',
+    ],
   },
   {
     time: 'future',
@@ -507,6 +560,9 @@ export const tenses: Tense[] = [
       },
     ],
     adverbs: ['by + thời điểm … for + khoảng thời gian', 'by then', 'by the time'],
+    notes: [
+      'Rất ít dùng. Nhấn vào tổng thời gian kéo dài tính đến một mốc tương lai.',
+    ],
   },
 ]
 
@@ -600,6 +656,118 @@ export const notes: Note[] = [
       {
         en: 'He has not been here since Christmas.',
         vi: 'Câu 1–2 ra hiện tại hoàn thành tiếp diễn; câu 3 chặn lại vì be là động từ chỉ trạng thái.',
+      },
+    ],
+  },
+  // Second: the signal words. Each tense already carries its own list in the
+  // dialog, but that list is only reachable by opening twelve dialogs and
+  // holding them in your head — and the question a learner actually has runs
+  // the other way round ("I see `by the time`, which tense?"). So the same
+  // information is inverted here into one table, on the page, unclicked.
+  //
+  // Every `when` is unique, and that is the whole difficulty of this table:
+  // before, after, by the time and since each point at two or three different
+  // tenses, so the word alone answers nothing. What settles it is the other
+  // clause, which is why the left column carries the word AND that condition.
+  {
+    title: 'Dấu hiệu nhận biết thì',
+    body: [
+      'Dấu hiệu nhận biết là gợi ý, không phải luật. Chúng cho biết nên nghĩ tới thì nào trước; quyết định cuối cùng vẫn là ba câu hỏi ở ghi chú trên.',
+      'Nhiều dấu hiệu dùng chung cho nhiều thì: before, after, by the time, since đều xuất hiện ở cả quá khứ lẫn tương lai. Cái phân biệt chúng là vế còn lại của câu, nên cột “Dấu hiệu” dưới đây ghi kèm điều kiện đó.',
+      'Hai bẫy hay gặp. Thứ nhất, in + năm ra quá khứ đơn khi năm đó đã qua (in 2024) nhưng ra tương lai khi năm đó chưa tới (in 2030) — bản thân chữ in không quyết định gì. Thứ hai, now đi với động từ chỉ trạng thái thì vẫn dùng hiện tại đơn: I understand now, không phải I am understanding now.',
+    ],
+    ruleHeads: ['Dấu hiệu', 'Thì', 'Ví dụ'],
+    rules: [
+      {
+        when: 'now, right now, at the moment, at present',
+        then: 'Hiện tại tiếp diễn',
+        examples: 'She is working now.',
+      },
+      {
+        when: 'Look! / Listen! / Be quiet!',
+        then: 'Hiện tại tiếp diễn',
+        examples: 'Listen! The baby is crying.',
+      },
+      {
+        when: 'always, usually, often, sometimes, every day',
+        then: 'Hiện tại đơn',
+        examples: 'She usually works at home.',
+      },
+      {
+        when: 'yesterday, last week/month/year',
+        then: 'Quá khứ đơn',
+        examples: 'She worked here last year.',
+      },
+      { when: 'ago (two days ago)', then: 'Quá khứ đơn', examples: 'She left two days ago.' },
+      {
+        when: 'in + năm đã qua (in 2024)',
+        then: 'Quá khứ đơn',
+        examples: 'She moved to Ha Noi in 2024.',
+      },
+      {
+        when: 'while + vế còn lại ở quá khứ',
+        then: 'Quá khứ tiếp diễn (vế dài) + quá khứ đơn (vế xen vào)',
+        examples: 'While she was working, the phone rang.',
+      },
+      {
+        when: 'at 8 p.m. last night, at that moment',
+        then: 'Quá khứ tiếp diễn',
+        examples: 'At 8 p.m. last night she was working.',
+      },
+      {
+        when: 'before / after + vế còn lại ở quá khứ',
+        then: 'Quá khứ hoàn thành (việc xảy ra trước)',
+        examples: 'She had worked there before she moved.',
+      },
+      {
+        when: 'by the time + vế còn lại ở quá khứ',
+        then: 'Quá khứ hoàn thành',
+        examples: 'By the time he arrived, she had left.',
+      },
+      {
+        when: 'just, already, yet, ever, never',
+        then: 'Hiện tại hoàn thành',
+        examples: 'She has just finished the report.',
+      },
+      {
+        when: 'since + mốc thời gian, for + khoảng thời gian',
+        then: 'Hiện tại hoàn thành — hoặc HTHT tiếp diễn nếu nhấn vào sự kéo dài',
+        examples: 'She has worked here since 2020.',
+      },
+      {
+        when: 'tomorrow, next week/month/year, soon',
+        then: 'Tương lai đơn',
+        examples: 'She will work tomorrow.',
+      },
+      {
+        when: 'in the future, someday',
+        then: 'Tương lai đơn',
+        examples: 'She will work abroad in the future.',
+      },
+      {
+        when: 'at this time tomorrow, this time next week',
+        then: 'Tương lai tiếp diễn',
+        examples: 'At this time tomorrow she will be working.',
+      },
+      {
+        when: 'by the time + vế còn lại ở tương lai',
+        then: 'Tương lai hoàn thành',
+        examples: 'By the time you arrive, she will have finished.',
+      },
+      {
+        when: 'by + mốc tương lai (by 2030), by then',
+        then: 'Tương lai hoàn thành',
+        examples: 'She will have finished by 2030.',
+      },
+    ],
+    examples: [
+      {
+        en: 'While she was working, the phone rang.',
+        vi: 'while → vế dài chia quá khứ tiếp diễn, vế ngắn xen vào chia quá khứ đơn.',
+      },
+      {
+        en: 'By the time you arrive, she will have finished.',
+        vi: 'by the time + vế còn lại ở tương lai → vế chính chia ở tương lai hoàn thành. Chú ý vế by the time dùng hiện tại đơn (arrive), không dùng will.',
       },
     ],
   },

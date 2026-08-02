@@ -2,51 +2,76 @@
   {
     "id": "personal-mistake",
     "content": "Talk about a mistake you made in your personal life.\n\nYour response can include the following points:\n- What is the mistake?\n- What steps did you take to correct it?",
-    "topics": ["personal", "reflection"]
+    "topics": [
+      "personal"
+    ]
   },
   {
     "id": "personal-goal",
     "content": "Describe a personal goal you have set for yourself.\n\nYour response can include the following points:\n- What is the goal you have set?\n- How are you planning to achieve it?",
-    "topics": ["personal", "goals"]
+    "topics": [
+      "personal",
+      "future"
+    ]
   },
   {
     "id": "mixed-age-workplace",
     "content": "Does having workers of different ages help the workplace?\n\nYour response can include the following points:\n- What benefits do older workers bring?\n- Should companies make sure all age groups work well together?",
-    "topics": ["work", "society"]
+    "topics": [
+      "work",
+      "society"
+    ]
   },
   {
     "id": "corporate-culture",
     "content": "What makes a strong corporate culture?\n\nYour response can include the following points:\n- Can you give an example of a company with a strong corporate culture?\n- Do companies really need to build and maintain a strong corporate culture?",
-    "topics": ["work", "culture"]
+    "topics": [
+      "work",
+      "society"
+    ]
   },
   {
     "id": "current-work-life",
     "content": "Talk about your current work life. What do you do in a typical week?\n\nYour response can include the following points:\n- What is your role and what do you mainly work on?\n- Who do you usually work with during the week?",
-    "topics": ["work", "routine"]
+    "topics": [
+      "work"
+    ]
   },
   {
     "id": "working-from-home",
     "content": "Is working from home better than working in an office?\n\nYour response can include the following points:\n- What do people gain by working from home?\n- What do teams lose when nobody is in the office?",
-    "topics": ["work", "change"]
+    "topics": [
+      "work",
+      "society"
+    ]
   },
   {
     "id": "good-manager",
     "content": "What makes someone a good manager?\n\nYour response can include the following points:\n- What qualities do the best managers you have met share?\n- Can management be taught, or is it something people are born with?",
-    "topics": ["work", "leadership"]
+    "topics": [
+      "work"
+    ]
   },
   {
     "id": "difficult-decision",
     "content": "Talk about a difficult decision you had to make.\n\nYour response can include the following points:\n- What made the decision difficult?\n- Would you make the same choice again?",
-    "topics": ["personal", "decisions"]
+    "topics": [
+      "personal"
+    ]
   },
   {
     "id": "ai-at-work",
     "content": "How will artificial intelligence change the work you do?\n\nYour response can include the following points:\n- Which parts of your job could a machine do today?\n- What should people keep doing themselves?",
-    "topics": ["technology", "work", "future"]
+    "topics": [
+      "work",
+      "future"
+    ]
   },
   {
     "id": "explain-your-job",
     "content": "Explain what you do for a living to a ten-year-old.\n\nNo jargon. If you use a word they would not know, stop and find another one.",
-    "topics": ["work", "communication"]
+    "topics": [
+      "work"
+    ]
   }
 ]
