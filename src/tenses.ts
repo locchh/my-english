@@ -422,7 +422,17 @@ function rulesHTML(rules: NoteRule[] | undefined, heads: [string, string, string
 /** One note block (s/es rules, near-future, stative verbs) for the page
  *  bottom. Rules table sits between the prose and the examples.
  *
- *  lang="vi" on the title and prose: all three notes are written in
+ *  <details>, not <article>: nine notes, two of them carrying a table of a
+ *  dozen-plus rows, made this section far longer than the grid it annotates, so
+ *  each one folds and the reader opens the one they came for. Native for the
+ *  same reason the tense popup is a native <dialog> — the toggle, its keyboard
+ *  operation and the aria-expanded state are the platform's rather than ours.
+ *
+ *  Only the highlighted note opens by default. It is the procedure, and it and
+ *  the next note cross-refer by position ("bảng dưới" here, "ghi chú trên"
+ *  there); both references only read if this one is unfolded.
+ *
+ *  lang="vi" on the title and prose: every note is written in
  *  Vietnamese, so this is unconditional rather than a per-note flag. Without
  *  it a screen reader reads "tri giác" with English phonetics. The embedded
  *  English verb names (see, hear, going to) are a minority inside a
@@ -432,12 +442,17 @@ function noteHTML(n: Note): string {
   // and a screen reader announcing "light bulb" before the title adds nothing.
   const bulb = n.highlight ? `<span class="tip-badge" aria-hidden="true">💡</span> ` : ''
   return `
-    <article class="note${n.highlight ? ' note-tip' : ''}">
-      <h3 lang="vi">${bulb}${n.title}</h3>
+    <details class="note${n.highlight ? ' note-tip' : ''}"${n.highlight ? ' open' : ''}>
+      <!-- The h3 stays, inside the summary: it is what keeps each note a
+           labelled sibling under the section's h2 in the outline. No wrapper
+           around the body — an inner element with padding would narrow the
+           tables without narrowing the .note that the container query at
+           style.css measures, which is how the old overflow came back. -->
+      <summary><h3 lang="vi">${bulb}${n.title}</h3></summary>
       ${n.body.map((p) => `<p lang="vi">${p}</p>`).join('')}
       ${rulesHTML(n.rules, n.ruleHeads)}
       ${examplesHTML(n.examples)}
-    </article>
+    </details>
   `
 }
 

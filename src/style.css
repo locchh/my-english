@@ -2448,6 +2448,28 @@ body.page-home {
   font-size: 0.9rem;
 }
 
+/* Each note is a <details>, so its h3 is the summary's own content and the
+   whole line is the hit target. */
+.note > summary {
+  cursor: pointer;
+}
+
+/* summary keeps display: list-item — flex or block here silently deletes
+   Chrome's disclosure triangle, which is the only thing telling the reader a
+   closed note has anything inside it. The h3 goes inline instead so it sits on
+   the marker's line, and its bottom margin goes with it: below a closed note's
+   title that margin is padding around nothing. */
+.note > summary h3 {
+  display: inline;
+  margin: 0;
+}
+
+/* Reinstates the gap the h3's dropped margin was providing, but only when it
+   has something to separate. */
+.note[open] > summary {
+  margin-bottom: 0.4rem;
+}
+
 /* The one note that's a procedure rather than a lookup table. Warm fill plus a
    heavier accent edge lifts it off the grey reference blocks; the bulb and the
    heading wording carry the same signal, so it doesn't rely on colour alone. */
